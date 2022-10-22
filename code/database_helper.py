@@ -5,6 +5,7 @@ from strings import *
 from items import *
 
 
+# A helper class for the relational database: [DONE]
 class DatabaseHelper:
     # Setting types:
     FRAME_RATE_LIMIT = 0
@@ -16,16 +17,19 @@ class DatabaseHelper:
     POTION = 1
 
     def __init__(self, game):
+        # The game is passed as an argument to access some of its attributes and methods:
         self.game = game
 
         # Name of the relational database:
         self.database = "database.db"
 
-        # Checking if the database already exists, no need to set it up again:
+        # Checking if the database already exists.
+        # If it does, no need to set it up again:
         if not os.path.isfile(self.database): self.set_up_tables()
 
     def set_up_tables(self):
         # Creating database tables:
+        # Starting values are inserted into each table so that when entering values, we can just use UPDATE:
         connection = sqlite3.connect(self.database)
         cursor = connection.cursor()
 
@@ -35,7 +39,7 @@ class DatabaseHelper:
                                    VALUE REAL NOT NULL
                                    )""")
 
-        # Default values for settings:
+        # Defaults for Settings:
         cursor.executemany("INSERT INTO SETTINGS VALUES(?, ?)",
                            [(self.FRAME_RATE_LIMIT, 60),
                             (self.SHOW_FRAME_RATE, 0),
@@ -51,8 +55,8 @@ class DatabaseHelper:
                                    B INTEGER NOT NULL
                                    )""")
 
+        # Inserting Level Paths, Names, RGB Background Colours:
         level_folder = "../level_maps"
-        # Inserting levels:
         cursor.executemany("INSERT INTO LEVELS VALUES(NULL, ?, ?, ?, ?, ?)",
                            [("Test Map", level_folder + "/" + "test_map/map.tmx", 145, 171, 23)])
 
@@ -62,6 +66,7 @@ class DatabaseHelper:
                                    VALUE REAL
                                    )""")
 
+        # Inserting Tentative Player Stats:
         cursor.executemany("INSERT INTO PLAYER_STATS VALUES(?, ?)",
                            [(Player.CURRENT_LEVEL_ID, 0),
                             (Player.FULL_HEALTH, 0),
@@ -71,9 +76,10 @@ class DatabaseHelper:
                             (Player.MELEE_COOLDOWN_MULTIPLIER, 1),
                             (Player.MAGIC_DAMAGE_MULTIPLIER, 1),
                             (Player.MAGIC_COOLDOWN_MULTIPLIER, 1),
-                            (Player.INVULNERABILITY_DURATION, 200)])
+                            (Player.INVULNERABILITY_DURATION, 500)])
 
-        # All items table (width and height in tile size):
+        # All Items Table:
+        # LENGTH is in tile size. Aspect ratio is protected when re-sizing so no need for another dimension.
         cursor.execute("""CREATE TABLE IF NOT EXISTS ITEMS(
                             NAME STRING PRIMARY KEY NOT NULL,
                             IMAGE_PATH STRING NOT NULL,
@@ -88,22 +94,24 @@ class DatabaseHelper:
                             (BATTLE_AXE, item_folder + "/" + "axe", 0.7, self.WEAPON),
                             (RAPIER, item_folder + "/" + "rapier", 0.7, self.WEAPON),
                             (Trident, item_folder + "/" + "sai", 0.6, self.WEAPON)])
+        # TODO: Insert Potion / Magic Items Here:
 
-        # Weapon properties table:
+        # Weapon Properties Table:
         cursor.execute("""CREATE TABLE IF NOT EXISTS WEAPON_PROPERTIES(
                         ITEM_NAME PRIMARY KEY NOT NULL,
                         DAMAGE FLOAT NOT NULL,
                         COOLDOWN FLOAT NOT NULL
                         )""")
 
+        # Inserting Weapon Properties:
         cursor.executemany("INSERT INTO WEAPON_PROPERTIES VALUES(?, ?, ?)",
-                           [(KNIGHT_SWORD, 20, 750),
+                           [(KNIGHT_SWORD, 10, 750),
                             (LANCE, 30, 1000),
                             (BATTLE_AXE, 35, 1200),
                             (RAPIER, 10, 300),
                             (Trident, 25, 850)])
 
-        # Potion properties table:S
+        # Potion Properties Table:
         cursor.execute("""CREATE TABLE IF NOT EXISTS POTION_PROPERTIES(
                         ITEM_NAME PRIMARY KEY NOT NULL,
                         HEALTH_BOOST FLOAT NOT NULL,
@@ -111,6 +119,7 @@ class DatabaseHelper:
                         ATTACK DAMAGE MULTIPLIER FLOAT NOT NULL,
                         MAGIC DAMAGE MULTIPLIER FLOAT NOT NULL
                         )""")
+        # TODO: Insert Potion Properties Here:
 
         # Player inventory table:
         cursor.execute("""CREATE TABLE IF NOT EXISTS INVENTORY(
@@ -118,6 +127,8 @@ class DatabaseHelper:
                             QUANTITY INTEGER NOT NULL
                         )""")
 
+        # Inserting Inventory Items:
+        # TODO: Only add 1 weapon and maybe 3 health potions:
         cursor.executemany("INSERT INTO INVENTORY VALUES(?, ?)",
                            [(KNIGHT_SWORD, 1),
                             (LANCE, 2),

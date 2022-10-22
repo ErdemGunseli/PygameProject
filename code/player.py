@@ -110,7 +110,7 @@ class Player(Tile):
         for folder_name in self.animations.keys():
             final_path = self.ANIMATION_PATH + "/" + folder_name
             self.animations[folder_name] = [Utils.resize_image(image, self.max_size)
-                                            for image in Utils.import_folder(final_path)]
+                                            for image in Utils.import_images_from_folder(final_path)]
 
     def handle_input(self):
         # Player cannot control character if using item:
@@ -191,7 +191,7 @@ class Player(Tile):
 
     def set_item_held(self, item):
         self.item_selected = item
-        self.item_use_cooldown = self.item_selected.get_cooldown()
+        self.item_use_cooldown = self.item_selected.get_use_duration()
 
     def update_cooldown_timers(self):
         # The timers for when an action requires a cooldown.

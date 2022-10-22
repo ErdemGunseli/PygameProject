@@ -2,19 +2,21 @@ import pygame
 from os import walk
 
 
+# Miscellaneous functions: [DONE]
 class Utils:
 
     @staticmethod
-    def import_folder(path):
-        # Pygame needs to be initiated for this function to work:
+    # Places all image surfaces in a directory into a list:
+    def import_images_from_folder(path):
 
-        surface_list = []
+
+        images = []
 
         for _, __, image_files in walk(path):
-            # The data_item variable contains a tuple.
-            # 0: path,
-            # 1: List of folders in path
-            # 2: list of files in our current path
+            # The data_item variable contains a tuple with the following items:
+            #   0: path to the folder
+            #   1: List of folders in path
+            #   2: list of files in our current path <- We are only interested in this.
 
             # The image variable will be a string of the file name:
             for image_file in image_files:
@@ -23,11 +25,12 @@ class Utils:
 
                 # Creating a surface using the image retrieved:
                 image_surface = pygame.image.load(full_path).convert_alpha()
-                surface_list.append(image_surface)
+                images.append(image_surface)
 
-        return surface_list
+        return images
 
     @staticmethod
+    # Resizes an image whilst protecting the aspect ratio:
     def resize_image(image, size):
         current_image_size = image.get_size()
         width = current_image_size[0]

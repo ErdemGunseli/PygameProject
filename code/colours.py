@@ -1,5 +1,6 @@
-# ~~ Defaults ~~ #
+# A small library of colours that the game uses: [DONE]
 
+# ~~ Defaults ~~ #
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
@@ -16,7 +17,6 @@ MAROON = (128, 0, 0)
 
 
 # ~~ Other ~~ #
-
 PLATINUM = (229, 228, 226)
 SMOKE = (132, 136, 132)
 IRIS = (93, 63, 211)

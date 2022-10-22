@@ -4,7 +4,7 @@ from strings import *
 
 
 # TODO: So far, the weapon class is very similar to how a generic item class would need to be.
-#  Change name to item, then add special weapon attributes
+#  Change name to item, then add special weapon attributes to a different weapon class inheriting from item
 class Weapon(Tile):
     # Weapon image file names:
     UP = "up.png"
@@ -13,7 +13,7 @@ class Weapon(Tile):
     RIGHT = "right.png"
     ICON = "icon.png"
 
-    def __init__(self, game, name, damage, cooldown, image_path, size):
+    def __init__(self, game, name, damage, use_duration, image_path, size):
         self.image_path = image_path
 
         super().__init__(game, size=size)
@@ -24,7 +24,7 @@ class Weapon(Tile):
         self.damage = damage
 
         # How long it takes to use item.
-        self.cooldown = cooldown
+        self.use_duration = use_duration
 
         self.images = None
         self.image_offsets = None
@@ -49,8 +49,8 @@ class Weapon(Tile):
     def get_name(self):
         return self.name
 
-    def get_cooldown(self):
-        return self.cooldown
+    def get_use_duration(self):
+        return self.use_duration
 
     def adjust_image(self, player):
         # Moving the image to the relevant side of the player and
@@ -83,7 +83,7 @@ class Weapon(Tile):
         return "{}\nDamage: {}\nCooldown: {}\nQuantity: {}".format(
             self.name,
             round(self.damage * player_stats[Player.MELEE_DAMAGE_MULTIPLIER], 2),
-            round(self.cooldown * player_stats[Player.MELEE_COOLDOWN_MULTIPLIER], 2),
+            round(self.use_duration * player_stats[Player.MELEE_COOLDOWN_MULTIPLIER], 2),
             player_inventory[self])
 
     def draw(self, draw_offset, player=None):

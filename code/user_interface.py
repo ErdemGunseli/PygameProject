@@ -4,13 +4,11 @@ from abc import ABC, abstractmethod
 from utils import *
 import pygame
 
-# TODO: Draw offset likely won't result in correct on-click and on-hover behaviour.
-#  Instead, create a move_offset in update?
-# TODO: Allow aligning with a point whilst including margin?
-
-# TODO: DO NOT MODIFY BEFORE FINISHING PROJECT - Maybe at the end:
+# TODO: DO NOT MODIFY UNNECESSARILY BEFORE FINISHING PROJECT - Maybe at the end:
+#  Integrate UI elements into the Game World
 #  Add getter & setter for Margin & Padding
 #  Allow relative placement to be changed after instantiation
+#  Create ViewGroup class that allows multiple views to be treated as one
 
 """
 This is my own UI framework, providing a dynamic component library, layout management, and responsive rendering.
@@ -53,7 +51,8 @@ class View(ABC, pygame.sprite.Sprite):
         # The game is passed as an argument to access some of its attributes and methods:
         self.game = game
 
-        # The UI elements with a relationship with the current one (used for responsive rendering):
+        # A list of all UI elements that are directly related to this one (used for responsive rendering).
+        # This list does not include elements that are related indirectly.
         self.relatives = []
 
         # Whether the UI element is visible (i.e. if it should be drawn):
@@ -106,6 +105,9 @@ class View(ABC, pygame.sprite.Sprite):
                     self.relatives.append(relative)
                     relative.add_relative(self)
 
+        # The element will not be re-positioned if it is not defined in relation to another
+        # - i.e. its position has been passed directly.
+
         # Adding UI elements we have just repositioned into an exclusion list to prevent infinite recursion:
         if exclude is None: exclude = []
         else: exclude = list(exclude)
@@ -121,6 +123,9 @@ class View(ABC, pygame.sprite.Sprite):
 
     def add_relative(self, view):
         self.relatives.append(view)
+
+    def get_relatives(self):
+        return self.relatives
 
     def get_rect(self):
         return self.rect
@@ -371,7 +376,7 @@ class TextLine(View):
 
     def draw_text(self, colour):
         # Rendering again to obtain the correct colour:
-        self.text_surface = self.font.render(self.text_string, True, colour) # TODO: Rendering each frame tanks fps
+        self.text_surface = self.font.render(self.text_string, True, colour)  # TODO: Rendering each frame tanks fps
         self.display.blit(self.text_surface, self.text_rect)
 
     def draw(self):
@@ -442,7 +447,7 @@ class Image(View):
         self.display.blit(self.icon, self.icon_rect)
 
     def update(self):
-        self.icon_rect.center = self.rect.center # TODO: Do we need to center every frame?
+        self.icon_rect.center = self.rect.center  # TODO: Do we need to center every frame?
         super().update()
 
 
@@ -814,7 +819,7 @@ class Text(View):
                                  font_size=self.game.pixel_to_unit(self.font_size),
                                  # Implementing the line separation as the margin for each line:
                                  # Using half the line separation because there are 2 text lines:
-                                 padding=0, margin=0.5*self.game.pixel_to_unit(self.line_separation),
+                                 padding=0, margin=0.5 * self.game.pixel_to_unit(self.line_separation),
                                  # Setting text style:
                                  bold=bold, italic=italic, underline=underline,
                                  # Individual text lines should not have a frame:
@@ -866,15 +871,10 @@ class Text(View):
         if self.text_lines is not None:
             self.position_texts()
 
-    def draw(self):
-        super().draw()
-        for text_line in self.text_lines:
-            text_line.draw()
-
     def update(self):
+        super().update()
         for text_line in self.text_lines:
             text_line.update()
-        super().update()
 
 
 # A slider that can slide horizontally, vertically or both: [DONE]
@@ -1004,7 +1004,7 @@ class ProgressBar(View):
                  position=(0, 0), above=None, below=None, to_left_of=None, to_right_of=None, between=None,
                  margin=0.02, padding=0.01,
                  frame_condition=View.ALWAYS, frame_thickness=0.005, corner_radius=0.01,
-                 progress_colour=RED, frame_colour=BLACK, text_colour=WHITE,
+                 progress_colour=RED, frame_colour=BLACK, text_colour=PLATINUM,
                  frame_hover_colour=None, text_hover_colour=None):
         # The direction in which the progress should move:
         self.orientation = orientation
@@ -1015,7 +1015,8 @@ class ProgressBar(View):
         # Will be set in set_size():
         # We need to keep track of the max size allowed since the size of the bar can change:
         self.max_size = None
-        self.bar_rect = None
+        # Tentative value (0,0), corrected afterwards:
+        self.bar_rect = pygame.Rect((0, 0), (0, 0))
 
         # The progress text:
         self.progress_text = TextLine(game,
@@ -1032,17 +1033,18 @@ class ProgressBar(View):
                          frame_condition=frame_condition, frame_thickness=frame_thickness, corner_radius=corner_radius,
                          frame_colour=frame_colour, frame_hover_colour=frame_hover_colour)
 
+
     def set_progress(self, progress):
         self.progress = progress
         # Setting the correct size for this progress:
-        self.progress_to_size()
+        self.update_bar_size()
 
         # Updating the progress text:
-        self.progress_text.set_text(Utils.percentage_format(self.progress))
+        self.progress_text.set_text(percentage_format(progress))
 
         self.align_rectangles()
 
-    def progress_to_size(self):
+    def update_bar_size(self):
         if self.orientation == View.HORIZONTAL:
             self.bar_rect.width = int(self.max_size[0] * self.progress)
         else:
@@ -1071,8 +1073,12 @@ class ProgressBar(View):
 
     def set_size(self, size):
         self.max_size = self.game.unit_to_pixel_point(size)
-        # Tentative location value (0,0), corrected afterwards:
-        self.bar_rect = pygame.Rect((0, 0), self.max_size)
+
+        # Changing size whilst maintaining the centre:
+        center = self.bar_rect.center
+        self.bar_rect.size = self.max_size
+        self.bar_rect.center = center
+
         # Updating the progress bar and text:
         self.set_progress(self.progress)
         super().set_size(size)
@@ -1089,5 +1095,7 @@ class ProgressBar(View):
         self.draw_progress()
 
     def update(self):
+        self.progress_text.calculate_position() # Can we remove this?
         super().update()
+        # Updating the progress text:
         self.progress_text.update()

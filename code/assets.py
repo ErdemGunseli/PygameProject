@@ -10,17 +10,21 @@ PLAYER_IMAGE = "../assets/images/graphics/player/down/down_2.png"
 icon_path = "../assets/images/icons"
 HEALTH_ICON = icon_path + "/" + "health.png"
 SPEED_ICON = icon_path + "/" + "speed.png"
-ATTACK_DAMAGE_ICON = icon_path + "/" + "melee_damage.png"
-MAGIC_DAMAGE_ICON = icon_path + "/" + "magic_damage.png"
+DAMAGE_ICON = icon_path + "/" + "damage.png"
+STEALTH_ICON = icon_path + "/" + "stealth.png"
 
 KEYBOARD_ICON = icon_path + "/" + "keyboard.png"
-CURSOR_ICON = icon_path + "/" + "cursor.png"
+BAG_ICON = icon_path + "/" + "bag.png"
 SWITCH_ICON = icon_path + "/" + "switch.png"
 PAUSE_ICON = icon_path + "/" + "pause.png"
 BOTTOM_RIGHT_ARROW_ICON = icon_path + "/" + "bottom_right_arrow.png"
+RED_CIRCLE = icon_path + "/" + "red_circle.png"
+GREEN_CIRCLE = icon_path + "/" + "green_circle.png"
+PIN_ICON = icon_path + "/" + "pin.png"
 TRASH_ICON = icon_path + "/" + "trash.png"
 SKULL_ICON = icon_path + "/" + "skull.png"
-INFORMATION_ICON = icon_path + "/" + "information.png"
+INFORMATION_ICON = icon_path + "/" + "info.png"
+
 
 # ~!~ Audio ~!~ #
 # ~~ Music ~~ #

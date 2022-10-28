@@ -1,13 +1,10 @@
 import random
-import pygame
+from assets import *
 from pygame import mixer
 from user_interface import *
 from level import *
 from strings import *
 from database_helper import DatabaseHelper
-
-
-# TODO: Check level-related aspects of game class:
 
 
 # Main game class: [DONE]
@@ -26,7 +23,8 @@ class Game:
         # Getting the current resolution of the physical screen:
         screen_info = pygame.display.Info()
         self.resolution = [screen_info.current_w, screen_info.current_h]
-        self.screen = pygame.display.set_mode(self.resolution, pygame.FULLSCREEN)  # TODO: REMOVE
+        self.resolution = [1280, 720]
+        self.screen = pygame.display.set_mode(self.resolution)  # , pygame.FULLSCREEN)  # TODO: REMOVE
         self.rect = self.screen.get_rect()
         pygame.display.set_caption(GAME_NAME)
         self.clock = pygame.time.Clock()
@@ -319,7 +317,7 @@ class Game:
         # Settings Text:
         txt_settings = TextLine(self, SETTINGS,
                                 between=(self.rect.midtop,
-                                         txt_resolution_value.get_rect().midtop),
+                                         txt_resolution_value),
                                 margin=0.015)
         views.append(txt_settings)
 
@@ -385,12 +383,12 @@ class Game:
         views.append(txt_information)
 
         # Information Paragraph
-        txt_information_paragraph = Text(self, INFO_PARAGRAPH, font_size=0.05, below=txt_information)
+        txt_information_paragraph = Text(self, INFO_PARAGRAPH, font_size=0.04, position=self.rect.center)
         views.append(txt_information_paragraph)
 
         text_lines = txt_information_paragraph.get_text_lines()
-        image_paths = [KEYBOARD_ICON, ATTACK_DAMAGE_ICON, SWITCH_ICON, BOTTOM_RIGHT_ARROW_ICON, CURSOR_ICON, TRASH_ICON,
-                       SKULL_ICON, PAUSE_ICON, INFORMATION_ICON]
+        image_paths = [KEYBOARD_ICON, BAG_ICON, TRASH_ICON, DAMAGE_ICON, SWITCH_ICON, BOTTOM_RIGHT_ARROW_ICON,
+                       PIN_ICON, GREEN_CIRCLE, RED_CIRCLE, SKULL_ICON, PAUSE_ICON, INFORMATION_ICON]
 
         for index, text_line in enumerate(text_lines):
             views.append(Image(self, icon=pygame.image.load(image_paths[index]), size=(0.035, 0.035),
@@ -423,6 +421,12 @@ class Game:
 
         # <!> __UI LAYOUT__ <!>
 
+        # Settings Text:
+        txt_create = TextLine(self, CREATE_CHARACTER,
+                              below=self.rect.midtop,
+                              margin=0.015)
+        views.append(txt_create)
+
         # Character Stats Slider:
         sl_stats = Slider(self, size=[0.3, 0.3],
                           start_value=[0.5, 0.5],
@@ -446,28 +450,30 @@ class Game:
         views.append(img_speed)
 
         # Attack Image:
-        img_attack_damage = Image(self, icon=pygame.image.load(ATTACK_DAMAGE_ICON).convert_alpha(),
+        img_attack_damage = Image(self, icon=pygame.image.load(DAMAGE_ICON).convert_alpha(),
                                   to_left_of=sl_stats,
                                   frame_condition=1)
         views.append(img_attack_damage)
 
         # Magic Image:
-        img_magic_damage = Image(self, icon=pygame.image.load(MAGIC_DAMAGE_ICON).convert_alpha(),
+        img_magic_damage = Image(self, icon=pygame.image.load(STEALTH_ICON).convert_alpha(),
                                  to_right_of=sl_stats,
                                  frame_condition=1)
         views.append(img_magic_damage)
 
-        # Initial values for stats:
-        health = 1
-        speed = 1
-        attack = 1
-        magic = 1
+        # Range of values for Player Stats:
+        health = [0.75, 1.25]
+        speed = [0.75, 1.25]
+        damage = [0.75, 1.25]
+        stealth = [0.75, 1.25]
+
+        health_val = 1
+        speed_val = 1
+        damage_val = 1
+        stealth_val = 1
 
         # Stats Text:
-        txt_stats = Text(self, CHARACTER_STATS.format(Utils.percentage_format(health),
-                                                      Utils.percentage_format(speed),
-                                                      Utils.percentage_format(attack),
-                                                      Utils.percentage_format(magic)),
+        txt_stats = Text(self, CHARACTER_STATS.format(*([percentage_format(1)] * 4)),
                          line_separation_ratio=0.35,
                          text_alignment=Text.CENTRE,
                          between=(self.rect.center, self.rect.midright),
@@ -510,14 +516,14 @@ class Game:
             # If the player is adjusting the stats, updating the stats text:
             elif sl_stats.handle_held:
                 slider_value = sl_stats.get_value()
-                health = round(Player.MIN_HEALTH + (Player.MAX_HEALTH - Player.MIN_HEALTH) * (1 - slider_value[1]), 2)
-                speed = round(Player.MIN_SPEED + (Player.MAX_SPEED - Player.MIN_SPEED) * slider_value[1], 2)
-                magic = round(Player.MIN_MAGIC + (Player.MAX_MAGIC - Player.MIN_MAGIC) * slider_value[0], 2)
-                attack = round(Player.MIN_ATTACK + (Player.MAX_ATTACK - Player.MIN_ATTACK) * (1 - slider_value[0]), 2)
-                txt_stats.set_text(CHARACTER_STATS.format(Utils.percentage_format(health),
-                                                          Utils.percentage_format(speed),
-                                                          Utils.percentage_format(attack),
-                                                          Utils.percentage_format(magic)))
+                health_val = round(health[0] + get_range(health) * (1 - slider_value[1]), 2)
+                speed_val = round(speed[0] + get_range(speed) * slider_value[1], 2)
+                damage_val = round(min(damage) + get_range(damage) * (1 - slider_value[0]), 2)
+                stealth_val = round(stealth[0] + get_range(stealth) * slider_value[0], 2)
+                txt_stats.set_text(CHARACTER_STATS.format(percentage_format(health_val),
+                                                          percentage_format(speed_val),
+                                                          percentage_format(damage_val),
+                                                          percentage_format(stealth_val)))
 
             elif btn_continue.clicked():
                 if edt_txt_player_name.input_empty():
@@ -526,11 +532,11 @@ class Game:
                 else:
                     # If the player has entered a name, saving the character
                     # and returning to the main menu which will start the game:
-                    self.database_helper.update_player_stats({Player.FULL_HEALTH: health,
-                                                              Player.CURRENT_HEALTH: health,
-                                                              Player.SPEED_MULTIPLIER: speed,
-                                                              Player.MELEE_DAMAGE_MULTIPLIER: attack,
-                                                              Player.MAGIC_DAMAGE_MULTIPLIER: magic})
+                    self.database_helper.update_player_stats({Player.FULL_HEALTH: health_val * 100,
+                                                              Player.CURRENT_HEALTH: health_val * 100,
+                                                              Player.SPEED_MULTIPLIER: speed_val,
+                                                              Player.DAMAGE_MULTIPLIER: damage_val,
+                                                              Player.STEALTH_MULTIPLIER: stealth_val})
                     return
 
             elif txt_warning.clicked():
@@ -542,7 +548,7 @@ class Game:
             self.clock.tick(self.frame_rate)
 
     def show_game(self):
-        background_colour = self.current_level.get_background_colour()
+        background_colour = Utils().get_level_colour(self.current_level.get_id())
 
         # Map needs to be set up after we have correct player from player creation menu:
         self.current_level.set_up_map()
@@ -576,7 +582,7 @@ class Game:
         views.append(btn_use)
 
         # Item properties text:
-        txt_item = Text(self, player.get_item_selected().properties(player),
+        txt_item = Text(self, player.get_item_selected().properties(),
                         text_alignment=View.CENTRE,
                         font_size=0.02,
                         padding=0.0075,
@@ -624,25 +630,22 @@ class Game:
             # Increment item selected:
             if self.key_pressed(pygame.K_TAB) or btn_switch.clicked():
                 player.increment_item_selected()
-                # After switching item, the icon and text need to be updated:
-                btn_use.set_icon(player.get_item_selected().get_icon())
-                txt_item.set_text(player.get_item_selected().properties(player))
 
-            # Use item:
             if btn_use.clicked():
                 player.use_item()
-
             elif btn_information.clicked():
                 self.show_information()
             elif btn_trash.clicked():
-                pass
-                # TODO: REMOVE ITEM SELECTED
+                player.destroy_item(player.get_item_selected())
 
-            # For testing TODO: REMOVE:
+            # Updating item properties text:
+            txt_item.set_text(player.get_item_selected().properties())
+            # Updating item icon:
+            btn_use.set_icon(player.get_item_selected().get_icon())
+
             if pr_health.clicked():
-                player.receive_damage(0.05)
+                player.receive_damage(5)
 
-            # Have Player.health_changed() to return true.
             pr_health.set_progress(player.get_stats()[Player.CURRENT_HEALTH] / player.get_stats()[Player.FULL_HEALTH])
 
             for view in views: view.update()
@@ -651,8 +654,14 @@ class Game:
             pygame.display.flip()
             self.clock.tick(self.frame_rate)
 
-        # After a level is done, update:
+        # If the level is done but the game is not, going to the next level:
         if not self.done:
+
+            level_id = self.current_level.get_id() + 1
+            if level_id not in Utils().LEVELS.keys():
+                level_id = 0
+
+            self.database_helper.update_player_stats({Player.CURRENT_LEVEL_ID: level_id})
             self.update_current_level()
             self.show_game()
 

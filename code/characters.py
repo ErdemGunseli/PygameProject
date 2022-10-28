@@ -450,7 +450,7 @@ class Enemy(Character):
         # Iterate through inventory items and set owner as None
         # (so that inventory items are dropped onto the ground).
         for item in self.inventory:
-            drop_chance = Utils().get_drop_chance(self.game, self.name, item.get_name())
+            drop_chance = Utils().get_drop_chance(self.name, item.get_name())
             if decision(drop_chance):
                 item.set_owner(None)
 

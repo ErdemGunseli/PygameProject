@@ -1,14 +1,17 @@
 # Contains all text strings used within the game: [DONE]
 
-# The purpose of this is to make it easier to change text strings,
-# and to allow a single file to be changed if the game was to be translated into a different language etc.
-
 # ~~ Game ~~ #
 GAME_NAME = "GAME NAME"
 PLACEHOLDER = "_"
 RESOLUTION_FORMAT = "{} x {}"
 
-# ~!~ UI ~!~ #
+# ~~ Misc ~~ #
+ON = "On"
+OFF = "Off"
+UP = "up"
+DOWN = "down"
+LEFT = "left"
+RIGHT = "right"
 
 # ~~ Main ~~ #
 PLAY_GAME = "Play Game"
@@ -41,33 +44,27 @@ I_3 = "Click on the 'Trash Icon' to destroy an item."
 I_4 = "Click on the 'Item Icon' or press SPACE to use an item."
 I_5 = "Click on the 'Switch Item Icon' or press TAB to switch between items."
 I_6 = "Look at the bottom right corner of the screen to see item attributes."
-i_7 = "Use the Quest Board to view information about the level and start the next level."
-i_8 = "To find the Quest Board, follow the Green Indicator on the edge of the screen."
-I_7 = "When an enemy is nearby, a Red Indicator will appear on the edge of the screen."
-I_8 = "Kill all the enemies within the level to progress."
-I_9 = "Click on the 'Pause Icon' or press ESC to pause the game."
-I_10 = "Click on the 'Information Icon' to view this information again."
-INFO_PARAGRAPH = "\n".join([I_1, I_2, I_3, I_4, I_5, I_6, i_7, i_8, I_7, I_8, I_9, I_10])
+I_7 = "Use the Quest Board to view information about the level and start the next level."
+I_8 = "To find the Quest Board, follow the Green Indicator on the edge of the screen."
+I_9 = "When an enemy is nearby, a Red Indicator will appear on the edge of the screen."
+I_10 = "Kill all the enemies within the level to progress."
+I_11 = "Click on the 'Pause Icon' or press ESC to pause the game."
+I_12 = "Click on the 'Information Icon' to view this information again."
+INFO_PARAGRAPH = "\n".join([I_1, I_2, I_3, I_4, I_5, I_6, I_7, I_8, I_9, I_10, I_11, I_12])
 GOT_IT = "Got It"
 
-# ~~ HUD ~~ #
+# ~~ Death ~~ #
 YOU_DIED = "You Died"
-DROP_ITEM = "Drop Item"
 
 # ~~ Quest Board ~~ #
-QUEST_BOARD_TEXT = "Quest Board\n(Optional) Find & Collect {} Items\n(Main) Find & Kill All Enemies\nEnemies " \
-                   "Remaining: {} "
+QUEST_BOARD_TEXT = ("Quest Board\n"
+                    "(Optional) Find & Collect {} Items\n"
+                    "(Main) Find & Kill All Enemies\n"
+                    "Enemies Remaining: {}")
 NEXT_LEVEL = "Next Level"
 RESTART_LEVEL = "Restart Level"
 NEXT_LEVEL_ERROR = "Kill All Enemies First"
 
-# ~~ Misc ~~ #
-ON = "On"
-OFF = "Off"
-UP = "up"
-DOWN = "down"
-LEFT = "left"
-RIGHT = "right"
 
 
 # ~!~ Character Names ~!~ #
@@ -75,9 +72,7 @@ PLAYER = "Player"
 DEMON = "Demon"
 SKELETON = "Skeleton"
 WARRIOR = "Warrior"
-
 ENEMY_NAMES = [DEMON, SKELETON, WARRIOR]
-
 
 
 # ~!~ Items ~!~ #
@@ -104,7 +99,6 @@ NORMAL_HEALING = "Normal Healing Potion"
 GREATER_HEALING = "Greater Healing Potion"
 SUPER_HEALING = "Super Healing Potion"
 
+
 ITEM_NAMES = [KNIGHT_SWORD, LANCE, BATTLE_AXE, RAPIER, TRIDENT, LONGSWORD, CLUB, FORK, HAMMER, KATANA, SPEAR,
               NUN_CHUCKS, STICK, BONE, LESSER_HEALING, NORMAL_HEALING, GREATER_HEALING, SUPER_HEALING]
-
-

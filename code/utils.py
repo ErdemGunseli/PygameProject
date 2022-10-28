@@ -4,7 +4,7 @@ from strings import *
 import random
 
 
-# Converts float value to percentage string:
+# Converts float value to a percentage string:
 def percentage_format(float_value):
     return "{}%".format(int(float_value * 100))
 
@@ -14,17 +14,15 @@ def import_images(path):
     images = []
 
     for _, __, image_files in walk(path):
-        # The data_item variable contains a tuple with the following items:
+        # Iterable contains a tuple with the following items:
         #   0: path to the folder
         #   1: List of folders in path
         #   2: list of files in our current path <- We are only interested in this.
 
-        # The image variable will be a string of the file name:
         for image_file in image_files:
-            # The full path to reach the image:
+            # The full path of image:
             full_path = path + "/" + image_file
 
-            # Creating a surface using the image retrieved:
             image_surface = pygame.image.load(full_path).convert_alpha()
             images.append(image_surface)
 
@@ -49,53 +47,50 @@ def resize_image(image, size):
     return pygame.transform.scale(image, (width, height))
 
 
-def mean(values):
-    return sum(values) / len(values)
-
-
+# A simple function that just returns the range of a numeric iterable:
 def get_range(values):
     return max(values) - min(values)
 
 
+# An algorithm that returns the intersection point of two line segments:
 def get_segment_intersection(points1, points2):
-    x1, y1, = points1[0]
-    x2, y2 = points1[1]
-    x3, y3 = points2[0]
-    x4, y4 = points2[1]
+    (x1, y1), (x2, y2) = points1
+    (x3, y3), (x4, y4) = points2
 
     denominator = ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
 
-    if denominator == 0:
-        return None
+    if denominator == 0: return None
 
     t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denominator
 
-    if not 0 <= t <= 1:
-        return None
+    if not 0 <= t <= 1: return None
 
     return x1 + t * (x2 - x1), y1 + t * (y2 - y1)
 
 
+# Returns the distance between two points:
 def get_distance_between(point1, point2):
     x1, y1 = point1
     x2, y2 = point2
     return ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
 
 
+# Returns True or False. Chance to return True is passed as the argument:
 def decision(probability):
-    # random.random() returns a random float between 0 and 1.
+    # random.random() returns a random float between 0 and 1:
     return random.random() < probability
 
 
+# Contains data relating to the non-user-modifiable aspects of the game: [TESTED & FINALISED]
 class Utils:
     # The following data was previously in the database.
-    # However, there is no point in storing non-user-modifiable data in the database, so they have been moved here:
     # However, there was no point in storing this data in the database because:
-    #  1. It is not user-modifiable
+    #  1. Data is not user-modifiable.
     #  2. Game isn't client-server so if any changes were to be made to this data,
-    #   a re-download would be necessary either way
+    #   a re-download would be necessary either way.
 
-    # Constants to avoid string references when accessing the data:
+    # Using constants throughout to avoid string references when accessing the data,
+    # and for autocomplete when referencing the data:
     NAME = 0
     PATH = 1
     COLOUR = 2
@@ -107,8 +102,8 @@ class Utils:
     LEVELS = {
         0: {NAME: "Level 1", PATH: level_folder + "/" + "test_map/map.tmx", COLOUR: (145, 171, 23)}
     }
-    SHOW_INDICATOR_RADIUS = 30  # How close the player needs to be to an enemy for an indicator to be shown:
-    INDICATOR_RADIUS = 0.4  # The radius of the hostile indicator in tiles
+    SHOW_INDICATOR_RADIUS = 30  # How close the player needs to be to an enemy in tiles for an indicator to be shown.
+    INDICATOR_RADIUS = 0.35  # The radius of the hostile indicator in tiles.
 
     WEAPON = 3
     POTION = 4
@@ -167,7 +162,6 @@ class Utils:
     POTION_DROPS = 14
     EQUIP_CHANCE = 15
     DROP_CHANCE = 16
-
     RECOVERY_DURATION = 17
 
     ENEMIES = {
@@ -215,7 +209,7 @@ class Utils:
         return self.LEVELS[level_id][self.PATH]
 
     def get_item(self, game, item_name):
-        # Importing here to avoid circular imports:
+        # Importing items inside the function to avoid circular imports:
         import items
 
         path = self.ITEMS[item_name][self.PATH]
@@ -223,9 +217,9 @@ class Utils:
         length = self.ITEMS[item_name][self.LENGTH]
         use_duration = self.ITEMS[item_name][self.USE_DURATION]
 
+        # Pattern matching to instantiate correct class:
         match item_type:
 
-            # Pattern matching to instantiate correct class:
             case self.WEAPON:
                 damage = self.ITEMS[item_name][self.DAMAGE]
                 item = items.Weapon(game, item_name, damage, use_duration, path, (length, length))
@@ -250,11 +244,10 @@ class Utils:
         # Obtaining the item with this name and returning:
         return self.get_item(game, item_name)
 
-    def get_drop_chance(self, game, enemy_name, item_name):
-        # Importing here to avoid circular imports:
+    def get_drop_chance(self, enemy_name, item_name):
+        # Importing items inside the function to avoid circular imports:
 
         drop_type = None
-
         if item_name in self.ENEMIES[enemy_name][self.POTION_DROPS]:
             drop_type = self.POTION_DROPS
         elif item_name in self.ENEMIES[enemy_name][self.WEAPON_DROPS]:
@@ -263,7 +256,7 @@ class Utils:
         return self.ENEMIES[enemy_name][drop_type][item_name][self.DROP_CHANCE]
 
     def get_enemy(self, game, enemy_name):
-        # Importing enemy here to avoid circular import:
+        # Importing Enemy from characters inside the function to avoid circular imports:
         from characters import Enemy
 
         health = self.ENEMIES[enemy_name][self.HEALTH]
@@ -271,7 +264,7 @@ class Utils:
         alert_radius = self.ENEMIES[enemy_name][self.ALERT_RADIUS]
         recovery_duration = self.ENEMIES[enemy_name][self.RECOVERY_DURATION]
 
-        # All enemies will have a weapon and potion.
+        # All enemies always equip a weapon and potion:
         # They have a chance to drop each when they die (depending on what they are carrying):
         weapon = self.get_random_drop(game, enemy_name, self.WEAPON_DROPS)
         potion = self.get_random_drop(game, enemy_name, self.POTION_DROPS)

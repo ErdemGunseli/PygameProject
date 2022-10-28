@@ -189,25 +189,25 @@ class Game:
 
         # Play Button:
         btn_play = Button(self,
-                          text_string=PLAY_GAME,
+                          text=PLAY_GAME,
                           position=self.rect.center)
         views.append(btn_play)
 
         # Settings Button:
         btn_settings = Button(self,
-                              text_string=SETTINGS,
+                              text=SETTINGS,
                               below=btn_play)
         views.append(btn_settings)
 
         # Quit Button:
         btn_quit = Button(self,
-                          text_string=QUIT,
+                          text=QUIT,
                           below=btn_settings)
         views.append(btn_quit)
 
         # Title Text:
         txt_title = TextLine(self,
-                             text_string=GAME_NAME,
+                             text=GAME_NAME,
                              between=(self.rect.midtop,
                                       btn_play),
                              frame_condition=View.ALWAYS,
@@ -272,7 +272,7 @@ class Game:
                                        font_size=0.04,
                                        hint=str(self.frame_rate),
                                        clear_on_submit=True,
-                                       input_type=TextInput.NATURAL_NUMBER,
+                                       input_type=TextInput.UNSIGNED_INTEGER,
                                        max_length=3,
                                        above=sel_show_frame_rate,
                                        margin=0.015)
@@ -322,7 +322,7 @@ class Game:
         views.append(txt_settings)
 
         # Delete Save Data Button:
-        btn_delete_saves = Button(self, text_string=DELETE_SAVES,
+        btn_delete_saves = Button(self, text=DELETE_SAVES,
                                   above=self.rect.midbottom,
                                   font_size=0.025,
                                   text_hover_colour=RED,
@@ -332,7 +332,7 @@ class Game:
 
         # Back Button:
         btn_back = Button(self,
-                          text_string=BACK,
+                          text=BACK,
                           font_size=0.04,
                           between=(sl_audio_volume.get_rect().midbottom,
                                    btn_delete_saves.get_rect().midtop),
@@ -397,7 +397,7 @@ class Game:
 
         # Confirm Button:
         btn_btn_confirm = Button(self,
-                                 text_string=GOT_IT,
+                                 text=GOT_IT,
                                  font_size=0.04,
                                  between=(txt_information_paragraph.get_rect().midbottom, self.rect.midbottom),
                                  margin=0.015)
@@ -493,7 +493,7 @@ class Game:
         views.append(txt_warning)
 
         # Continue Button:
-        btn_continue = Button(self, text_string=CONTINUE,
+        btn_continue = Button(self, text=CONTINUE,
                               below=txt_warning)
         views.append(btn_continue)
 
@@ -667,7 +667,7 @@ class Game:
 
     def show_death_screen(self):
         views = []
-        btn_continue = Button(self, text_string=CONTINUE,
+        btn_continue = Button(self, text=CONTINUE,
                               position=self.rect.center,
                               text_colour=PLATINUM)
         views.append(btn_continue)
@@ -714,6 +714,10 @@ class Game:
         views.append(edt_txt_1)
         example_texts.append(edt_txt_1)
 
+        img_test = Image(self, pygame.image.load(STEALTH_ICON).convert_alpha(), to_left_of=edt_txt_1,
+                         frame_condition=View.ALWAYS, margin=0)
+        views.append(img_test)
+
         sl_text_size = Slider(self, below=edt_txt_1, margin=0.015)
         views.append(sl_text_size)
 
@@ -726,33 +730,33 @@ class Game:
         sl_margin = Slider(self, below=sl_padding, margin=0.015)
         views.append(sl_margin)
 
-        txt_paragraph = Text(self, text_string="Hi\nThere\nHow\nAre\nYou\nToday?", font_size=0.02,
+        txt_paragraph = Text(self, text="Hi\nThere\nHow\nAre\nYou\nToday?", font_size=0.02,
                              to_right_of=edt_txt_1)
         views.append(txt_paragraph)
         example_texts.append(txt_paragraph)
 
-        btn_centre = Button(self, text_string="Centre", font_size=0.02, to_right_of=txt_paragraph, margin=0.005,
+        btn_centre = Button(self, text="Centre", font_size=0.02, to_right_of=txt_paragraph, margin=0.005,
                             padding=0.007, frame_thickness=0.0025)
         views.append(btn_centre)
 
-        btn_left = Button(self, text_string="Left", font_size=0.02, above=btn_centre, margin=0.005,
+        btn_left = Button(self, text="Left", font_size=0.02, above=btn_centre, margin=0.005,
                           padding=0.007, frame_thickness=0.0025)
         views.append(btn_left)
 
-        btn_right = Button(self, text_string="Right", font_size=0.02, below=btn_centre, margin=0.005,
+        btn_right = Button(self, text="Right", font_size=0.02, below=btn_centre, margin=0.005,
                            padding=0.007, frame_thickness=0.0025)
         views.append(btn_right)
 
-        btn_underline = Button(self, text_string="U", font_size=0.03, below=sl_margin, underline=True, margin=0.015)
+        btn_underline = Button(self, text="U", font_size=0.03, below=sl_margin, underline=True, margin=0.015)
         views.append(btn_underline)
 
-        btn_bold = Button(self, text_string="B", font_size=0.03, to_left_of=btn_underline, bold=True, margin=0.015)
+        btn_bold = Button(self, text="B", font_size=0.03, to_left_of=btn_underline, bold=True, margin=0.015)
         views.append(btn_bold)
 
-        btn_italic = Button(self, text_string="I", font_size=0.03, to_right_of=btn_underline, italic=True, margin=0.015)
+        btn_italic = Button(self, text="I", font_size=0.03, to_right_of=btn_underline, italic=True, margin=0.015)
         views.append(btn_italic)
 
-        btn_back = Button(self, text_string="Back", font_size=0.03, between=(btn_underline, self.rect.midbottom),
+        btn_back = Button(self, text="Back", font_size=0.03, between=(btn_underline, self.rect.midbottom),
                           margin=0.015)
         views.append(btn_back)
 

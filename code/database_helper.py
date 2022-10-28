@@ -1,25 +1,18 @@
 import os
 import sqlite3
-from utils import *
-from characters import *
-from strings import *
 from items import *
 
 
 # TODO: DO NOT MODIFY UNNECESSARILY BEFORE FINISHING PROJECT - Maybe at the end:
-#  Determine which data is absolutely Non-User-Modifiable and put it elsewhere
-#  If performance cannot be increased further, do not do autosave
+#  If further performance increase is required, do not do autosave
 #  and only save data when the game is paused or level changed.
 
-# A helper class for the relational database: [DONE]
+# A helper class for the relational database: [TESTED & FINALISED]
 class DatabaseHelper:
     # Setting types:
     FRAME_RATE_LIMIT = 0
     SHOW_FRAME_RATE = 1
     AUDIO_VOLUME = 2
-
-    # Item Types (storing these here as the Weapon and Potion classes do not need them):
-
 
     def __init__(self, game):
         # The game is passed as an argument to access some of its attributes and methods:
@@ -34,7 +27,7 @@ class DatabaseHelper:
 
     def set_up_tables(self):
         # Creating database tables:
-        # Starting values are inserted into each table so that when entering values, we can just use UPDATE:
+        # Starting values are inserted into each table so that when entering values, we can just UPDATE:
         connection = sqlite3.connect(self.database)
         cursor = connection.cursor()
 
@@ -60,11 +53,11 @@ class DatabaseHelper:
         cursor.executemany("INSERT INTO PLAYER_STATS VALUES(?, ?)",
                            [(Player.CURRENT_LEVEL_ID, 0),
                             (Player.FULL_HEALTH, 0),
-                            (Player.CURRENT_HEALTH, 0),
+                            (Player.CURRENT_HEALTH, 0),  # TODO: If Unused, Remove:
                             (Player.SPEED_MULTIPLIER, 1),
                             (Player.DAMAGE_MULTIPLIER, 1),
                             (Player.STEALTH_MULTIPLIER, 1),
-                            (Player.INVULNERABILITY_DURATION, 300)])
+                            (Player.INVULNERABILITY_DURATION, 300)])  # TODO: If Unused, Remove:
 
 
         # Player inventory table:
@@ -103,13 +96,9 @@ class DatabaseHelper:
         cursor = connection.cursor()
 
         # Deleting all tables one by one:
-        # Even need to delete item property tables since the values would be inserted twice:
+#        cursor.execute("DROP TABLE IF EXISTS SETTINGS")
         cursor.execute("DROP TABLE IF EXISTS SETTINGS")
-        cursor.execute("DROP TABLE IF EXISTS LEVELS")
         cursor.execute("DROP TABLE IF EXISTS PLAYER_STATS")
-        cursor.execute("DROP TABLE IF EXISTS ITEMS")
-        cursor.execute("DROP TABLE IF EXISTS WEAPON_PROPERTIES")
-        cursor.execute("DROP TABLE IF EXISTS POTION_PROPERTIES")
         cursor.execute("DROP TABLE IF EXISTS INVENTORY")
 
         self.set_up_tables()
@@ -145,19 +134,17 @@ class DatabaseHelper:
         connection.commit()
         connection.close()
 
-
     def get_player_stats(self):
         connection = sqlite3.connect(self.database)
         cursor = connection.cursor()
 
-        # Retrieving desired level:
         cursor.execute("SELECT * FROM PLAYER_STATS")
 
         cursor_return = cursor.fetchall()
         stats = {}
         if cursor_return is not None:
-            for item in cursor_return:
-                stats[item[0]] = item[1]
+            for key, value in cursor_return:
+                stats[key] = value
 
         connection.commit()
         connection.close()
@@ -165,34 +152,26 @@ class DatabaseHelper:
         return stats
 
     def update_player_stats(self, player_stats):
-        # Parameter name player_object to avoid shadows:
         connection = sqlite3.connect(self.database)
         cursor = connection.cursor()
 
         for stat_type in player_stats:
-            print(f"Value: {player_stats[stat_type]}, TYPE: {stat_type}")
             cursor.execute("UPDATE PLAYER_STATS SET VALUE=? WHERE TYPE=?", [player_stats[stat_type], stat_type])
 
         connection.commit()
         connection.close()
 
-
     def get_player_inventory(self):
         connection = sqlite3.connect(self.database)
         cursor = connection.cursor()
 
-        # Retrieving inventory:
         cursor.execute("SELECT * FROM INVENTORY")
 
         inventory_return = cursor.fetchall()
         inventory = {}
         if inventory_return is not None:
-            for index, item in enumerate(inventory_return):
-                name = inventory_return[index][0]
-                quantity = inventory_return[index][1]
-
-                inventory_item = Utils().get_item(self.game, name)
-
+            for index, (item_name, quantity) in enumerate(inventory_return):
+                inventory_item = Utils().get_item(self.game, item_name)
                 inventory[inventory_item] = quantity
 
         connection.commit()
@@ -201,7 +180,6 @@ class DatabaseHelper:
         return inventory
 
     def update_player_inventory(self, player_inventory):
-        # Parameter name player_object to avoid shadows:
         connection = sqlite3.connect(self.database)
         cursor = connection.cursor()
 
@@ -209,9 +187,8 @@ class DatabaseHelper:
         cursor.execute("DELETE FROM INVENTORY")
 
         for item in player_inventory:
-            item_name = item.get_name()
-
             # Adding item:
+            item_name = item.get_name()
             cursor.execute("INSERT INTO INVENTORY VALUES(?, ?)", [item_name, player_inventory[item]])
 
         connection.commit()

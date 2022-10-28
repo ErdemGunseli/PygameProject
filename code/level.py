@@ -324,6 +324,9 @@ class Level:  # [DONE]
             if intersection is not None:
                 self.draw_indicator(intersection + self.draw_offset, GREEN)
 
+    def draw_indicator(self, point, colour):
+        pygame.draw.circle(self.display, colour, point, Utils.INDICATOR_RADIUS * self.tile_size)
+
     def set_up_quest_board_views(self):
         self.quest_board_views = []
 
@@ -331,17 +334,17 @@ class Level:  # [DONE]
                              text_alignment=Text.CENTRE, frame_thickness=0, text_colour=WHITE)
         self.quest_board_views.append(self.txt_info)
 
-        self.btn_restart_level = Button(self.game, text_string=RESTART_LEVEL, to_left_of=self.txt_info,
+        self.btn_restart_level = Button(self.game, text=RESTART_LEVEL, to_left_of=self.txt_info,
                                         font_size=0.02, margin=0.01, frame_condition=View.ALWAYS, frame_thickness=0,
                                         text_colour=WHITE, text_hover_colour=WHITE)
         self.quest_board_views.append(self.btn_restart_level, )
 
-        self.btn_next_level = Button(self.game, text_string=NEXT_LEVEL, to_right_of=self.txt_info, font_size=0.02,
+        self.btn_next_level = Button(self.game, text=NEXT_LEVEL, to_right_of=self.txt_info, font_size=0.02,
                                      margin=0.01, frame_condition=View.ALWAYS, frame_thickness=0, text_colour=WHITE,
                                      text_hover_colour=WHITE)
         self.quest_board_views.append(self.btn_next_level)
 
-        self.txt_error = TextLine(self.game, text_string=NEXT_LEVEL_ERROR, above=self.txt_info, font_size=0.02,
+        self.txt_error = TextLine(self.game, text=NEXT_LEVEL_ERROR, above=self.txt_info, font_size=0.02,
                                   margin=0.01, visible=False, text_colour=WHITE, frame_colour=RED, frame_thickness=0,
                                   frame_condition=View.ALWAYS)
         self.quest_board_views.append(self.txt_error)
@@ -372,8 +375,6 @@ class Level:  # [DONE]
 
         for view in self.quest_board_views: view.update()
 
-    def draw_indicator(self, point, colour):
-        pygame.draw.circle(self.display, colour, point, Utils.INDICATOR_RADIUS * self.tile_size)
 
     def update(self):
         self.draw_map()
@@ -382,5 +383,3 @@ class Level:  # [DONE]
         if self.quest_board is not None:
             self.draw_quest_board_indicator()
             self.update_quest_board_data()
-
-        # print(self.item_tiles)

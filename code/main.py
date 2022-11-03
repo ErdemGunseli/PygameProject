@@ -1,4 +1,7 @@
 import random
+
+import pygame.mixer
+
 from assets import *
 from pygame import mixer
 from user_interface import *
@@ -8,6 +11,8 @@ from database_helper import DatabaseHelper
 
 
 class Game:  # [TESTED & FINALISED]
+
+    MUSIC_VOLUME_MULTIPLIER = 0.85
 
     def __init__(self):
         pygame.init()
@@ -19,11 +24,13 @@ class Game:  # [TESTED & FINALISED]
         # A helper for the relational database:
         self.database_helper = DatabaseHelper(self)
 
+        # The music that is being played at the moment:
+        self.current_music = pygame.mixer.Sound(MENU_MUSIC)
+
         # Getting the current resolution of the physical screen:
         screen_info = pygame.display.Info()
         self.resolution = [screen_info.current_w, screen_info.current_h]
-        self.resolution = [1280, 720]
-        self.screen = pygame.display.set_mode(self.resolution)  # , pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode(self.resolution, pygame.FULLSCREEN)
         self.rect = self.screen.get_rect()
         pygame.display.set_caption(GAME_NAME)
         self.clock = pygame.time.Clock()
@@ -95,8 +102,7 @@ class Game:  # [TESTED & FINALISED]
 
         # Getting the audio volume level:
         self.audio_volume = self.database_helper.get_setting(DatabaseHelper.AUDIO_VOLUME)
-        mixer.music.set_volume(self.audio_volume)
-
+        self.current_music.set_volume(self.audio_volume * self.MUSIC_VOLUME_MULTIPLIER)
         # Setting up level:
         self.refresh_current_level()
 
@@ -142,7 +148,13 @@ class Game:  # [TESTED & FINALISED]
         # Updating the database:
         self.database_helper.update_setting(DatabaseHelper.AUDIO_VOLUME, audio_volume)
         # Setting the volume of all the sounds:
-        mixer.music.set_volume(audio_volume)
+        self.current_music.set_volume(audio_volume * self.MUSIC_VOLUME_MULTIPLIER)
+
+    def set_music(self, music, fade_out=1000, fade_in=1000):
+        self.current_music.fadeout(fade_out)
+        self.current_music = pygame.mixer.Sound(music)
+        self.current_music.set_volume(self.audio_volume * self.MUSIC_VOLUME_MULTIPLIER)
+        self.current_music.play(fade_ms=fade_in, loops=-1)
 
     def get_key_down_events(self):
         return self.key_down_events
@@ -192,6 +204,9 @@ class Game:  # [TESTED & FINALISED]
         return pygame.font.SysFont(self.font, size)
 
     def show_main_menu(self):
+        # Playing the menu music:
+        self.set_music(MENU_MUSIC)
+
         views = []
 
         # <!> __UI LAYOUT__ <!>
@@ -246,6 +261,8 @@ class Game:  # [TESTED & FINALISED]
                 # the game can start without having to click the start button again:
                 if self.database_helper.get_player_stats()[Player.FULL_HEALTH] > 0:
                     self.show_game()
+                    # Playing the menu music when the player returns:
+                    self.set_music(MENU_MUSIC)
 
             elif btn_settings.clicked():
                 self.show_settings_menu()
@@ -562,7 +579,10 @@ class Game:  # [TESTED & FINALISED]
             self.clock.tick(self.frame_rate)
 
     def show_game(self):
-        background_colour = Utils().get_level_colour(self.current_level.get_id())
+        # Setting level music and background:
+        level_id = self.current_level.get_id()
+        self.set_music(Utils().get_music(level_id))
+        background_colour = Utils().get_level_colour(level_id)
 
         # The map set-up should be done after the character creation menu so that we have the correct player.
         # So it is not done when the level is instantiated, but when the game is first shown:
@@ -676,7 +696,8 @@ class Game:  # [TESTED & FINALISED]
             if self.current_level.is_done():
                 # Checking which level should be played from the database:
                 self.refresh_current_level()
-                # Updating background colour, setting up level and obtaining player:
+                # Updating background colour, music, setting up level and obtaining player:
+                self.set_music(Utils().get_music(self.current_level.get_id()))
                 background_colour = Utils().get_level_colour(self.current_level.get_id())
                 self.current_level.set_up_map()
                 player = self.current_level.get_player()

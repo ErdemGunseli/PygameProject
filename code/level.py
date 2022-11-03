@@ -46,7 +46,7 @@ class Level:  # [TESTED & FINALISED]
         self.display = pygame.display.get_surface()
         self.display_rect = self.display.get_rect()
         # Calculating the pixel size of each tile according to how many should fit on-screen:
-        min_tile_count = Utils().LEVELS[level_id][Utils.MIN_TILE_COUNT]
+        min_tile_count = Utils().get_min_tile_count(level_id)
         self.tile_size = min(self.display_rect.width, self.display_rect.height) // min_tile_count
         # Setting the scale factor for the correct conversion of the position of objects:
         self.scale_factor = self.TILE_RESOLUTION / self.tile_size
@@ -345,7 +345,7 @@ class Level:  # [TESTED & FINALISED]
         self.quest_board_views.append(self.btn_next_level)
 
         # Level Name Text:
-        self.txt_level_name = TextLine(self.game, text=Utils().LEVELS[self.id][Utils.NAME], font_size=0.04,
+        self.txt_level_name = TextLine(self.game, text=Utils().get_name(self.id), font_size=0.04,
                                        above=self.txt_info, margin=0, padding=0.015, frame_condition=View.ALWAYS,
                                        frame_thickness=0, text_colour=WHITE)
         self.quest_board_views.append(self.txt_level_name)

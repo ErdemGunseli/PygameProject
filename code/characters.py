@@ -1,11 +1,11 @@
 import pygame.image
 from tile import Tile
-from utils import *
+from assets import *
 from user_interface import *
 
 
 class Character(Tile):  # [TESTED & FINALISED]
-    # Constants for Stat Types::
+    # Constants for Stat Types:
     FULL_HEALTH = 0
     CURRENT_HEALTH = 1
 
@@ -29,6 +29,8 @@ class Character(Tile):  # [TESTED & FINALISED]
 
     # Animation frame durations in ms:
     ANIMATION_FRAME_TIME = 150
+    # Cooldown for damage sound in ms to prevent it from becoming too annoying:
+    DAMAGED_SOUND_COOLDOWN = 2000
 
     def __init__(self, game, stats, inventory, animation_path, position=(0, 0)):
         super().__init__(game, position, collider_ratio=(1, 1))
@@ -55,6 +57,11 @@ class Character(Tile):  # [TESTED & FINALISED]
         self.invulnerable = True
         self.invulnerability_start_time = 0
 
+        # The sound to be played when the character is damaged:
+        self.damaged_sound = pygame.mixer.Sound(WEAPON_USE)
+        self.damaged_sound_start_time = 0
+        self.damaged_sound_can_be_played = True
+
 
         # The item that is held by the character:
         # The player cannot remove all items from their inventory,
@@ -67,7 +74,6 @@ class Character(Tile):  # [TESTED & FINALISED]
         # For very high frame rates, the number of pixels the character should travel per frame is less than 1.
         # For this reason, storing this value and adding it to the distance each frame:
         self.displacement_deficit = [0, 0]
-
 
         # Animations:
         self.animations = None
@@ -198,6 +204,10 @@ class Character(Tile):  # [TESTED & FINALISED]
         if current_time - self.invulnerability_start_time >= self.stats[self.INVULNERABILITY_DURATION]:
             self.invulnerable = False
 
+        # Character can only play damage sound after a cooldown:
+        if current_time - self.damaged_sound_start_time >= self.DAMAGED_SOUND_COOLDOWN:
+            self.damaged_sound_can_be_played = True
+
     def handle_collision(self, axis):
         # Retrieving the collision objects:
         obstacle_sprites = self.level.get_obstacle_tiles_in_frame().copy()
@@ -245,6 +255,13 @@ class Character(Tile):  # [TESTED & FINALISED]
         # Character becomes invulnerable for a short time after receiving damage:
         self.invulnerable = True
         self.invulnerability_start_time = pygame.time.get_ticks()
+
+        # Playing damage sound:
+        if self.damaged_sound_can_be_played:
+            self.damaged_sound_start_time = pygame.time.get_ticks()
+            self.damaged_sound.set_volume(self.game.get_audio_volume())
+            self.damaged_sound.play()
+            self.damaged_sound_can_be_played = False
 
         # Reducing current health:
         self.stats[self.CURRENT_HEALTH] -= damage_value
@@ -325,6 +342,11 @@ class Player(Character):  # [TESTED & FINALISED]
     def __init__(self, game, stats, inventory, position=(0, 0)):
         super().__init__(game, stats, inventory, self.ANIMATION_PATH, position=position)
 
+        # Sounds:
+        self.damaged_sound = pygame.mixer.Sound(PLAYER_DAMAGED)
+        self.item_pickup_sound = pygame.mixer.Sound(ITEM_PICKUP)
+
+
     def handle_input(self):
         # Player cannot move if an item is in use:
         if self.item_held.is_in_use():
@@ -370,6 +392,10 @@ class Player(Character):  # [TESTED & FINALISED]
         # Removing the item from the ground and setting player as the owner:
         item.set_owner(self)
 
+        # Playing sound:
+        self.item_pickup_sound.set_volume(self.game.get_audio_volume())
+        self.item_pickup_sound.play()
+
         # Determining if there is an identical item in the inventory:
         item_in_inventory = self.get_item_by_name(item.get_name())
 
@@ -398,6 +424,8 @@ class Player(Character):  # [TESTED & FINALISED]
         self.stats[self.CURRENT_HEALTH] = self.stats[self.FULL_HEALTH]
         # Restarting the same level:
         self.level.set_done(True)
+        # Starting the death music and showing the death screen:
+        self.game.set_music(DEATH_MUSIC)
         self.game.show_death_screen()
 
     def update(self):
@@ -430,10 +458,15 @@ class Enemy(Character):  # [TESTED & FINALISED]
 
         # The attack range should be just where the item held can reach the player:
         self.attack_range = max(self.item_held.get_collider().size)
-
         # Enemies need to go into recovery for a period of time after they attack:
         self.in_recovery = True
         self.recovery_start_time = 0
+
+        # Sound to be played upon taking damage:
+        self.damaged_sound = pygame.mixer.Sound(ENEMY_DAMAGED)
+
+        # Sound played by enemy upon death:
+        self.death_sound = pygame.mixer.Sound(ENEMY_DEATH)
 
         # The health bar above the enemy's head:
         self.health_bar = ProgressBar(self.game, font_size=0.02,
@@ -454,6 +487,13 @@ class Enemy(Character):  # [TESTED & FINALISED]
         if direction != (0, 0):
             self.direction = pygame.Vector2(direction).normalize()
 
+    def update_cooldown_timers(self):
+        super().update_cooldown_timers()
+        # Also updating recovery cooldown:
+        current_time = pygame.time.get_ticks()
+        if current_time - self.recovery_start_time >= self.stats[self.RECOVERY_DURATION]:
+            self.in_recovery = False
+
     def death_sequence(self):
         for item in self.inventory:
             # Obtaining the chance that the item gets dropped:
@@ -461,6 +501,10 @@ class Enemy(Character):  # [TESTED & FINALISED]
             if decision(drop_chance):
                 # Setting the owner as None, so that the item appears on the ground:
                 item.set_owner(None)
+
+        # Playing death sound:
+        self.death_sound.set_volume(self.game.get_audio_volume())
+        self.death_sound.play()
 
         # Removing the enemy itself from the level:
         self.game.get_current_level().remove_tile(self)
@@ -471,14 +515,6 @@ class Enemy(Character):  # [TESTED & FINALISED]
         super().use_item()
         self.recovery_start_time = pygame.time.get_ticks()
         self.in_recovery = True
-
-    def update_cooldown_timers(self):
-        super().update_cooldown_timers()
-
-        # Also updating recovery cooldown:
-        current_time = pygame.time.get_ticks()
-        if current_time - self.recovery_start_time >= self.stats[self.RECOVERY_DURATION]:
-            self.in_recovery = False
 
     def update_views(self):
         # Setting health bar progress according to enemy health:

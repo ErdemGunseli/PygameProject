@@ -1,6 +1,7 @@
 import pygame
 from os import walk
 from strings import *
+from assets import *
 import random
 
 
@@ -96,80 +97,81 @@ class Utils:
     COLOUR = 2
     # The minimum number of tiles that should fit the length and width of the screen:
     MIN_TILE_COUNT = 3
+    MUSIC = 4
 
     level_folder = "../level_maps"
     weapon_folder = "../assets/images/weapons"
     potion_folder = "../assets/images/potions"
 
     LEVELS = {
-        0: {NAME: "LEVEL NAME", PATH: level_folder + "/" + "test_map/map.tmx",
-            COLOUR: (145, 171, 23), MIN_TILE_COUNT: 15},
-        1: {NAME: "Thank You For Playing", PATH: level_folder + "/" + "test_map_2/map.tmx",
-            COLOUR: (145, 171, 23), MIN_TILE_COUNT: 20}
+        0: {NAME: "Forest Battle", PATH: path.format(level_folder, "test_map/map.tmx"),
+            COLOUR: (145, 171, 23), MIN_TILE_COUNT: 15, MUSIC: LEVEL_1_MUSIC},
+        1: {NAME: "Showdown", PATH: path.format(level_folder, "test_map_2/map.tmx"),
+            COLOUR: (145, 171, 23), MIN_TILE_COUNT: 10, MUSIC: LEVEL_2_MUSIC},
     }
     INDICATOR_DISTANCE = 30  # How close the player needs to be to an enemy in tiles for an indicator to be shown.
     INDICATOR_RADIUS = 0.35  # The radius of the hostile indicator in tiles.
 
-    WEAPON = 4
-    POTION = 5
-    LENGTH = 6
-    USE_DURATION = 7
-    DAMAGE = 8
-    HEALING = 9
-    TYPE = 10
+    WEAPON = 5
+    POTION = 6
+    LENGTH = 7
+    USE_DURATION = 8
+    DAMAGE = 9
+    HEALING = 10
+    TYPE = 11
 
     ITEMS = {
         # Weapons:
-        KNIGHT_SWORD: {PATH: weapon_folder + "/" + "sword",
+        KNIGHT_SWORD: {PATH: path.format(weapon_folder, "sword"),
                        LENGTH: 0.6, USE_DURATION: 750, DAMAGE: 300, TYPE: WEAPON},
-        LANCE: {PATH: weapon_folder + "/" + "lance",
+        LANCE: {PATH: path.format(weapon_folder, "lance"),
                 LENGTH: 1.2, USE_DURATION: 1000, DAMAGE: 300, TYPE: WEAPON},
-        BATTLE_AXE: {PATH: weapon_folder + "/" + "axe",
+        BATTLE_AXE: {PATH: path.format(weapon_folder, "axe"),
                      LENGTH: 0.7, USE_DURATION: 1200, DAMAGE: 320, TYPE: WEAPON},
-        RAPIER: {PATH: weapon_folder + "/" + "rapier",
+        RAPIER: {PATH: path.format(weapon_folder, "rapier"),
                  LENGTH: 0.7, USE_DURATION: 300, DAMAGE: 220, TYPE: WEAPON},
-        TRIDENT: {PATH: weapon_folder + "/" + "trident",
+        TRIDENT: {PATH: path.format(weapon_folder, "trident"),
                   LENGTH: 0.6, USE_DURATION: 850, DAMAGE: 600, TYPE: WEAPON},
-        LONGSWORD: {PATH: weapon_folder + "/" + "longsword",
+        LONGSWORD: {PATH: path.format(weapon_folder, "longsword"),
                     LENGTH: 0.8, USE_DURATION: 1100, DAMAGE: 400, TYPE: WEAPON},
-        CLUB: {PATH: weapon_folder + "/" + "club",
+        CLUB: {PATH: path.format(weapon_folder, "club"),
                LENGTH: 0.7, USE_DURATION: 500, DAMAGE: 150, TYPE: WEAPON},
-        FORK: {PATH: weapon_folder + "/" + "fork",
+        FORK: {PATH: path.format(weapon_folder, "fork"),
                LENGTH: 0.7, USE_DURATION: 950, DAMAGE: 190, TYPE: WEAPON},
-        HAMMER: {PATH: weapon_folder + "/" + "hammer",
+        HAMMER: {PATH: path.format(weapon_folder, "hammer"),
                  LENGTH: 0.7, USE_DURATION: 1150, DAMAGE: 220, TYPE: WEAPON},
-        KATANA: {PATH: weapon_folder + "/" + "katana",
+        KATANA: {PATH: path.format(weapon_folder, "katana"),
                  LENGTH: 0.7, USE_DURATION: 350, DAMAGE: 500, TYPE: WEAPON},
-        SPEAR: {PATH: weapon_folder + "/" + "spear",
+        SPEAR: {PATH: path.format(weapon_folder, "spear"),
                 LENGTH: 1, USE_DURATION: 900, DAMAGE: 290, TYPE: WEAPON},
-        NUN_CHUCKS: {PATH: weapon_folder + "/" + "nun_chucks",
+        NUN_CHUCKS: {PATH: path.format(weapon_folder, "nun_chucks"),
                      LENGTH: 1, USE_DURATION: 450, DAMAGE: 450, TYPE: WEAPON},
-        STICK: {PATH: weapon_folder + "/" + "stick",
+        STICK: {PATH: path.format(weapon_folder, "stick"),
                 LENGTH: 1, USE_DURATION: 400, DAMAGE: 180, TYPE: WEAPON},
-        BONE: {PATH: weapon_folder + "/" + "bone",
+        BONE: {PATH: path.format(weapon_folder, "bone"),
                LENGTH: 0.5, USE_DURATION: 600, DAMAGE: 150, TYPE: WEAPON},
 
         # Potions:
-        LESSER_HEALING: {PATH: potion_folder + "/" + "lesser_healing", USE_DURATION: 200,
+        LESSER_HEALING: {PATH: path.format(potion_folder, "lesser_healing"), USE_DURATION: 200,
                          LENGTH: 0.5, HEALING: 10, TYPE: POTION},
-        NORMAL_HEALING: {PATH: potion_folder + "/" + "normal_healing", USE_DURATION: 500,
+        NORMAL_HEALING: {PATH: path.format(potion_folder, "normal_healing"), USE_DURATION: 500,
                          LENGTH: 0.65, HEALING: 25, TYPE: POTION},
-        GREATER_HEALING: {PATH: potion_folder + "/" + "greater_healing", USE_DURATION: 800,
+        GREATER_HEALING: {PATH: path.format(potion_folder, "greater_healing"), USE_DURATION: 800,
                           LENGTH: 0.8, HEALING: 50, TYPE: POTION},
-        SUPER_HEALING: {PATH: potion_folder + "/" + "super_healing", USE_DURATION: 1000,
+        SUPER_HEALING: {PATH: path.format(potion_folder, "super_healing"), USE_DURATION: 1000,
                         LENGTH: 0.95, HEALING: 100, TYPE: POTION},
     }
 
-    HEALTH = 11
-    SPEED = 12
-    ALERT_RADIUS = 13
-    WEAPON_DROPS = 14
-    POTION_DROPS = 15
-    EQUIP_CHANCE = 16
-    DROP_CHANCE = 17
+    HEALTH = 12
+    SPEED = 13
+    ALERT_RADIUS = 14
+    WEAPON_DROPS = 15
+    POTION_DROPS = 16
+    EQUIP_CHANCE = 17
+    DROP_CHANCE = 18
     # How long it takes for enemies to recover after using an item:
     # For players, there is no such game mechanic.
-    RECOVERY_DURATION = 18
+    RECOVERY_DURATION = 19
 
     ENEMIES = {
         DEMON: {HEALTH: 250, SPEED: 4, ALERT_RADIUS: 10, RECOVERY_DURATION: 850,
@@ -209,11 +211,21 @@ class Utils:
                    },
     }
 
-    def get_level_colour(self, level_id):
-        return self.LEVELS[level_id][self.COLOUR]
+
+    def get_name(self, level_id):
+        return self.LEVELS[level_id][self.NAME]
 
     def get_level_path(self, level_id):
         return self.LEVELS[level_id][self.PATH]
+
+    def get_level_colour(self, level_id):
+        return self.LEVELS[level_id][self.COLOUR]
+
+    def get_min_tile_count(self, level_id):
+        return self.LEVELS[level_id][self.MIN_TILE_COUNT]
+
+    def get_music(self, level_id):
+        return self.LEVELS[level_id][self.MUSIC]
 
     def get_item(self, game, item_name):
         # Importing items inside the function to avoid circular imports:

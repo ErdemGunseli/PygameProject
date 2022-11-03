@@ -1,23 +1,16 @@
 from characters import *
 import pygame.transform
 from strings import *
+from assets import *
 
 
 class Item(Tile):  # [TESTED & FINALISED]
     # Icon image file name:
     ICON = "icon.png"
 
-    def __init__(self, game, name, use_duration, image_path, size, owner=None, position=(0, 0)):
+    def __init__(self, game, name, use_duration, image_path, size, use_sound_path=None, owner=None, position=(0, 0)):
 
         super().__init__(game, position=position, size=size)
-
-        # The path to the folder containing the images:
-        self.image_path = image_path
-        # A dictionary of labels and image surfaces:
-        self.images = {}
-        # Filling image dictionary:
-        self.import_images()
-        self.set_image(self.images[self.ICON])
 
         # The name of the item:
         self.name = name
@@ -27,11 +20,21 @@ class Item(Tile):  # [TESTED & FINALISED]
         self.use_start_time = 0
         self.use_duration = use_duration
 
+        # Sound effects for using item:
+        self.use_sound = pygame.mixer.Sound(use_sound_path)
+
+        # The path to the folder containing the images:
+        self.image_path = image_path
+        # A dictionary of labels and image surfaces:
+        self.images = {}
+        # Filling image dictionary:
+        self.import_images()
+        self.set_image(self.images[self.ICON])
+
         # How much the image should be offset by to match the hand of the player:
         # Values for this is set by the player, since if the player model was to change,
         # these values would also be different. So it is not wise to hard-code them:
         self.image_offsets = {UP: (0, 0), DOWN: (0, 0), LEFT: (0, 0), RIGHT: (0, 0)}
-
 
         # If the item does not have an owner, it is on the ground:
         # If an item is in collision with the player, it's owner can be set to the player:
@@ -66,7 +69,7 @@ class Item(Tile):  # [TESTED & FINALISED]
 
     def import_images(self):
         # Base item class only has one image in its dictionary - children have more:
-        final_path = self.image_path + "/" + self.ICON
+        final_path = path.format(self.image_path, self.ICON)
         self.images = {self.ICON: resize_image(pygame.image.load(final_path).convert_alpha(), self.max_size)}
 
     def adjust_image(self):
@@ -96,6 +99,9 @@ class Item(Tile):  # [TESTED & FINALISED]
 
     def use(self):
         if not self.in_use:
+            # Playing use sound:
+            self.use_sound.set_volume(self.game.get_audio_volume())
+            self.use_sound.play()
             self.in_use = True
             self.use_start_time = pygame.time.get_ticks()
 
@@ -129,7 +135,8 @@ class Item(Tile):  # [TESTED & FINALISED]
 class Potion(Item):  # [TESTED & FINALISED]
 
     def __init__(self, game, name, health_boost, use_duration, image_path, size, owner=None, position=(0, 0)):
-        super().__init__(game, name, use_duration, image_path, size, owner, position)
+        super().__init__(game, name, use_duration, image_path, size,
+                         use_sound_path=POTION_USE, owner=owner, position=position)
 
         # The increase in health of the owner when the potion is consumed:
         self.health_boost = health_boost
@@ -170,7 +177,8 @@ class Weapon(Item):  # [TESTED & FINALISED]
     RIGHT = "right.png"
 
     def __init__(self, game, name, damage,  use_duration, image_path, size, owner=None, position=(0, 0), ):
-        super().__init__(game, name, use_duration, image_path, size, owner, position)
+        super().__init__(game, name, use_duration, image_path, size,
+                         use_sound_path=WEAPON_USE, owner=owner, position=position)
 
         # The damage to be dealt per second to any vulnerable sprite when impacted:
         self.damage = damage

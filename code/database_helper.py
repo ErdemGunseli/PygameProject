@@ -52,7 +52,7 @@ class DatabaseHelper:
                             (Player.SPEED_MULTIPLIER, 1),
                             (Player.DAMAGE_MULTIPLIER, 1),
                             (Player.STEALTH_MULTIPLIER, 1),
-                            (Player.INVULNERABILITY_DURATION, 300)])
+                            (Player.INVULNERABILITY_DURATION, 350)])
 
         # Player inventory table:
         cursor.execute("""CREATE TABLE IF NOT EXISTS INVENTORY(

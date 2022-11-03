@@ -81,4 +81,3 @@ class Tile(pygame.sprite.Sprite):
         self.collider_image.set_alpha(128)
         self.collider_image.fill(RED)
         pygame.display.get_surface().blit(self.collider_image, self.collider.topleft + draw_offset)
-

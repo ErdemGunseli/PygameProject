@@ -3,10 +3,6 @@ import sqlite3
 from items import *
 
 
-# TODO: DO NOT MODIFY UNNECESSARILY BEFORE FINISHING PROJECT - Maybe at the end:
-#  If further performance increase is required, do not do autosave
-#  and only save data when the game is paused or level changed.
-
 # A helper class for the relational database: [TESTED & FINALISED]
 class DatabaseHelper:
     # Setting types:
@@ -59,7 +55,6 @@ class DatabaseHelper:
                             (Player.STEALTH_MULTIPLIER, 1),
                             (Player.INVULNERABILITY_DURATION, 300)])  # TODO: If Unused, Remove:
 
-
         # Player inventory table:
         cursor.execute("""CREATE TABLE IF NOT EXISTS INVENTORY(
                             ITEM_NAME STRING PRIMARY KEY NOT NULL,
@@ -96,7 +91,7 @@ class DatabaseHelper:
         cursor = connection.cursor()
 
         # Deleting all tables one by one:
-#        cursor.execute("DROP TABLE IF EXISTS SETTINGS")
+        #        cursor.execute("DROP TABLE IF EXISTS SETTINGS")
         cursor.execute("DROP TABLE IF EXISTS SETTINGS")
         cursor.execute("DROP TABLE IF EXISTS PLAYER_STATS")
         cursor.execute("DROP TABLE IF EXISTS INVENTORY")
@@ -196,3 +191,7 @@ class DatabaseHelper:
 
     def get_player(self):
         return Player(self.game, self.get_player_stats(), self.get_player_inventory())
+
+    def update_player(self, player):
+        self.update_player_stats(player.get_stats())
+        self.update_player_inventory(player.get_inventory())

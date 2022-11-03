@@ -2,14 +2,8 @@ from characters import *
 import pygame.transform
 from strings import *
 
-
 # TODO: DO NOT MODIFY UNNECESSARILY BEFORE FINISHING PROJECT - Maybe at the end:
 #  Make some Optimisations
-
-# TODO: DO NOT MODIFY UNNECESSARILY BEFORE FINISHING PROJECT - Maybe at the end:
-#  Make some Optimisations Create
-#  Potions with Different Effects
-#  Put Properties Texts into strings.py
 
 
 class Item(Tile):

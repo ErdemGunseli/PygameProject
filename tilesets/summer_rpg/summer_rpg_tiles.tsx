@@ -199,7 +199,7 @@
  <tile id="62" probability="0.1">
   <image width="256" height="157" source="summer_rpg_tiles/stones_7.png"/>
  </tile>
- <tile id="1" probability="50">
+ <tile id="1" probability="20">
   <image format="png">
    <data encoding="base64"></data>
   </image>

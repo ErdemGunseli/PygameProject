@@ -383,7 +383,7 @@ class TextLine(View):
 
     def draw_text(self, colour):
         # Rendering again to obtain the correct colour:
-        self.text_surface = self.font.render(self.text, True, colour)  # TODO: Rendering each frame tanks fps
+        self.text_surface = self.font.render(self.text, True, colour)
         self.display.blit(self.text_surface, self.text_rect)
 
     def draw(self):

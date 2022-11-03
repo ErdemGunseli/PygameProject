@@ -94,24 +94,29 @@ class Utils:
     NAME = 0
     PATH = 1
     COLOUR = 2
+    # The minimum number of tiles that should fit the length and width of the screen:
+    MIN_TILE_COUNT = 3
 
     level_folder = "../level_maps"
     weapon_folder = "../assets/images/weapons"
     potion_folder = "../assets/images/potions"
 
     LEVELS = {
-        0: {NAME: "Level 1", PATH: level_folder + "/" + "test_map/map.tmx", COLOUR: (145, 171, 23)}
+        0: {NAME: "LEVEL NAME", PATH: level_folder + "/" + "test_map/map.tmx",
+            COLOUR: (145, 171, 23), MIN_TILE_COUNT: 15},
+        1: {NAME: "Thank You For Playing", PATH: level_folder + "/" + "test_map_2/map.tmx",
+            COLOUR: (145, 171, 23), MIN_TILE_COUNT: 20}
     }
-    SHOW_INDICATOR_RADIUS = 30  # How close the player needs to be to an enemy in tiles for an indicator to be shown.
+    INDICATOR_DISTANCE = 30  # How close the player needs to be to an enemy in tiles for an indicator to be shown.
     INDICATOR_RADIUS = 0.35  # The radius of the hostile indicator in tiles.
 
-    WEAPON = 3
-    POTION = 4
-    LENGTH = 5
-    USE_DURATION = 6
-    DAMAGE = 7
-    HEALING = 8
-    TYPE = 9
+    WEAPON = 4
+    POTION = 5
+    LENGTH = 6
+    USE_DURATION = 7
+    DAMAGE = 8
+    HEALING = 9
+    TYPE = 10
 
     ITEMS = {
         # Weapons:
@@ -124,7 +129,7 @@ class Utils:
         RAPIER: {PATH: weapon_folder + "/" + "rapier",
                  LENGTH: 0.7, USE_DURATION: 300, DAMAGE: 220, TYPE: WEAPON},
         TRIDENT: {PATH: weapon_folder + "/" + "trident",
-                  LENGTH: 0.6, USE_DURATION: 850, DAMAGE: 375, TYPE: WEAPON},
+                  LENGTH: 0.6, USE_DURATION: 850, DAMAGE: 600, TYPE: WEAPON},
         LONGSWORD: {PATH: weapon_folder + "/" + "longsword",
                     LENGTH: 0.8, USE_DURATION: 1100, DAMAGE: 400, TYPE: WEAPON},
         CLUB: {PATH: weapon_folder + "/" + "club",
@@ -155,28 +160,30 @@ class Utils:
                         LENGTH: 0.95, HEALING: 100, TYPE: POTION},
     }
 
-    HEALTH = 10
-    SPEED = 11
-    ALERT_RADIUS = 12
-    WEAPON_DROPS = 13
-    POTION_DROPS = 14
-    EQUIP_CHANCE = 15
-    DROP_CHANCE = 16
-    RECOVERY_DURATION = 17
+    HEALTH = 11
+    SPEED = 12
+    ALERT_RADIUS = 13
+    WEAPON_DROPS = 14
+    POTION_DROPS = 15
+    EQUIP_CHANCE = 16
+    DROP_CHANCE = 17
+    # How long it takes for enemies to recover after using an item:
+    # For players, there is no such game mechanic.
+    RECOVERY_DURATION = 18
 
     ENEMIES = {
-        DEMON: {HEALTH: 300, SPEED: 4, ALERT_RADIUS: 10, RECOVERY_DURATION: 1000,
+        DEMON: {HEALTH: 250, SPEED: 4, ALERT_RADIUS: 10, RECOVERY_DURATION: 1000,
                 PATH: "../assets/images/characters/enemies/demon",
                 WEAPON_DROPS: {BATTLE_AXE: {EQUIP_CHANCE: 0.3, DROP_CHANCE: 0.5},
-                               TRIDENT: {EQUIP_CHANCE: 0.4, DROP_CHANCE: 0.3},
-                               LONGSWORD: {EQUIP_CHANCE: 0.3, DROP_CHANCE: 0.8}},
+                               TRIDENT: {EQUIP_CHANCE: 0.1, DROP_CHANCE: 0},
+                               LONGSWORD: {EQUIP_CHANCE: 0.6, DROP_CHANCE: 0.8}},
 
                 POTION_DROPS: {
                     GREATER_HEALING: {EQUIP_CHANCE: 0.6, DROP_CHANCE: 0.9},
                     SUPER_HEALING: {EQUIP_CHANCE: 0.4, DROP_CHANCE: 0.9}}
                 },
 
-        WARRIOR: {HEALTH: 200, SPEED: 6, ALERT_RADIUS: 15, RECOVERY_DURATION: 750,
+        WARRIOR: {HEALTH: 180, SPEED: 6, ALERT_RADIUS: 15, RECOVERY_DURATION: 750,
                   PATH: "../assets/images/characters/enemies/warrior",
                   WEAPON_DROPS: {LANCE: {EQUIP_CHANCE: 0.2, DROP_CHANCE: 0.8},
                                  KATANA: {EQUIP_CHANCE: 0.3, DROP_CHANCE: 0.5},

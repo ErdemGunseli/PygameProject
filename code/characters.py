@@ -280,6 +280,9 @@ class Character(Tile):
         self.displacement_deficit = [displacement_required[0] - displacement_possible[0],
                                      displacement_required[1] - displacement_possible[1]]
 
+
+        # Moving the player with horizontal and vertical components separately,
+        # so that we know which side the player is colliding on:
         self.collider.x += displacement_possible[0]
         self.handle_collision(0)
 
@@ -357,6 +360,7 @@ class Player(Character):
 
     def death_sequence(self):
         self.stats[self.CURRENT_HEALTH] = self.stats[self.FULL_HEALTH]
+        # Restart the same level:
         self.level.set_done(True)
         self.game.show_death_screen()
 
@@ -490,7 +494,6 @@ class Enemy(Character):
                     self.set_direction_towards(self.player.get_rect().center)
             else:
                 self.direction.update(0, 0)
-
 
         self.update_views()
         self.update_cooldown_timers()

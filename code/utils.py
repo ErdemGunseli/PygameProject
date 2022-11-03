@@ -172,7 +172,7 @@ class Utils:
     RECOVERY_DURATION = 18
 
     ENEMIES = {
-        DEMON: {HEALTH: 250, SPEED: 4, ALERT_RADIUS: 10, RECOVERY_DURATION: 1000,
+        DEMON: {HEALTH: 250, SPEED: 4, ALERT_RADIUS: 10, RECOVERY_DURATION: 850,
                 PATH: "../assets/images/characters/enemies/demon",
                 WEAPON_DROPS: {BATTLE_AXE: {EQUIP_CHANCE: 0.3, DROP_CHANCE: 0.5},
                                TRIDENT: {EQUIP_CHANCE: 0.1, DROP_CHANCE: 0},
@@ -183,7 +183,7 @@ class Utils:
                     SUPER_HEALING: {EQUIP_CHANCE: 0.4, DROP_CHANCE: 0.9}}
                 },
 
-        WARRIOR: {HEALTH: 180, SPEED: 6, ALERT_RADIUS: 15, RECOVERY_DURATION: 750,
+        WARRIOR: {HEALTH: 180, SPEED: 6, ALERT_RADIUS: 15, RECOVERY_DURATION: 700,
                   PATH: "../assets/images/characters/enemies/warrior",
                   WEAPON_DROPS: {LANCE: {EQUIP_CHANCE: 0.2, DROP_CHANCE: 0.8},
                                  KATANA: {EQUIP_CHANCE: 0.3, DROP_CHANCE: 0.5},
@@ -195,7 +195,7 @@ class Utils:
                                  GREATER_HEALING: {EQUIP_CHANCE: 0.4, DROP_CHANCE: 0.9}}
                   },
 
-        SKELETON: {HEALTH: 200, SPEED: 4, ALERT_RADIUS: 7, RECOVERY_DURATION: 2000,
+        SKELETON: {HEALTH: 200, SPEED: 4, ALERT_RADIUS: 7, RECOVERY_DURATION: 1500,
                    PATH: "../assets/images/characters/enemies/skeleton",
                    WEAPON_DROPS: {CLUB: {EQUIP_CHANCE: 0.2, DROP_CHANCE: 0.4},
                                   FORK: {EQUIP_CHANCE: 0.1, DROP_CHANCE: 0.4},

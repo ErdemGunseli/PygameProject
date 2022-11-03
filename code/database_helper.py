@@ -49,11 +49,10 @@ class DatabaseHelper:
         cursor.executemany("INSERT INTO PLAYER_STATS VALUES(?, ?)",
                            [(Player.CURRENT_LEVEL_ID, 0),
                             (Player.FULL_HEALTH, 0),
-                            (Player.CURRENT_HEALTH, 0),  # TODO: If Unused, Remove:
                             (Player.SPEED_MULTIPLIER, 1),
                             (Player.DAMAGE_MULTIPLIER, 1),
                             (Player.STEALTH_MULTIPLIER, 1),
-                            (Player.INVULNERABILITY_DURATION, 300)])  # TODO: If Unused, Remove:
+                            (Player.INVULNERABILITY_DURATION, 300)])
 
         # Player inventory table:
         cursor.execute("""CREATE TABLE IF NOT EXISTS INVENTORY(
@@ -140,6 +139,8 @@ class DatabaseHelper:
         if cursor_return is not None:
             for key, value in cursor_return:
                 stats[key] = value
+
+        stats[Player.CURRENT_HEALTH] = stats[Player.FULL_HEALTH]
 
         connection.commit()
         connection.close()

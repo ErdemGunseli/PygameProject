@@ -2,24 +2,22 @@ from characters import *
 import pygame.transform
 from strings import *
 
-# TODO: DO NOT MODIFY UNNECESSARILY BEFORE FINISHING PROJECT - Maybe at the end:
-#  Make some Optimisations
 
-
-class Item(Tile):
-
-    # Icon image name:
+class Item(Tile):  # [TESTED & FINALISED]
+    # Icon image file name:
     ICON = "icon.png"
 
-
     def __init__(self, game, name, use_duration, image_path, size, owner=None, position=(0, 0)):
-        self.image_path = image_path
 
         super().__init__(game, position=position, size=size)
 
+        # The path to the folder containing the images:
+        self.image_path = image_path
+        # A dictionary of labels and image surfaces:
         self.images = {}
+        # Filling image dictionary:
         self.import_images()
-        self.set_icon(self.images[self.ICON])
+        self.set_image(self.images[self.ICON])
 
         # The name of the item:
         self.name = name
@@ -30,38 +28,38 @@ class Item(Tile):
         self.use_duration = use_duration
 
         # How much the image should be offset by to match the hand of the player:
-        self.image_offsets = {UP: (0, 0), DOWN: (0, 0), LEFT: (0, 0), RIGHT: (0, 0)}
         # Values for this is set by the player, since if the player model was to change,
-        # these values would also be different. So it is not wise to hard-code them.
+        # these values would also be different. So it is not wise to hard-code them:
+        self.image_offsets = {UP: (0, 0), DOWN: (0, 0), LEFT: (0, 0), RIGHT: (0, 0)}
+
 
         # If the item does not have an owner, it is on the ground:
-        # The player can then be set as the owner:
+        # If an item is in collision with the player, it's owner can be set to the player:
         self.owner = None
         self.set_owner(owner)
 
     def set_owner(self, owner):
         if owner is None:
 
-            # If item had a previous owner, place the item at the feet of the previous owner:
+            # If item had a previous owner, placing the item at the feet of the previous owner:
             if self.owner is not None:
                 self.rect.midtop = self.owner.get_rect().midbottom
                 self.collider.midtop = self.owner.get_rect().midbottom
 
-            # Adding item into the level:
+            # Adding the item into the level, since it no longer has an owner:
             self.level.add_tile(self, visible=True, depth=True, obstacle=False, dynamic=True, item=True)
 
         else:
-            # If the owner is not none, removing the item from the level:
+            # If an owner has been set, removing the item from the level:
             self.level.remove_tile(self)
 
-            # Getting correct image offsets for player:
+            # Getting correct image offsets from owner:
             self.image_offsets = owner.get_item_offsets()
 
         self.owner = owner
 
         # Setting icon as image:
         self.image = self.images[self.ICON]
-
 
     def get_owner(self):
         return self.owner
@@ -71,20 +69,8 @@ class Item(Tile):
         final_path = self.image_path + "/" + self.ICON
         self.images = {self.ICON: resize_image(pygame.image.load(final_path).convert_alpha(), self.max_size)}
 
-    def get_icon(self):
-        return self.image
-
-    def set_image_offsets(self, image_offsets):
-        self.image_offsets = image_offsets
-
-    def get_name(self):
-        return self.name
-
-    def get_use_duration(self):
-        return self.use_duration
-
     def adjust_image(self):
-        # Moving the image to the relevant side of the player and
+        # Moving the image to the relevant side of the character and
         # adding an offset so that it matches the position of the hand:
         match self.owner.get_animation_status():
             case Player.UP_USE:
@@ -102,8 +88,11 @@ class Item(Tile):
         self.rect.size = self.image.get_size()
         self.adjust_collider()
 
-    def properties(self):
-        return "Item"
+    def get_icon(self):
+        return self.image
+
+    def get_name(self):
+        return self.name
 
     def use(self):
         if not self.in_use:
@@ -119,22 +108,30 @@ class Item(Tile):
         if current_time - self.use_start_time >= self.use_duration:
             self.in_use = False
 
+    def properties(self):
+        return "Item"
+
     def draw(self, draw_offset):
         if self.owner is not None:
-            # Need to adjust image every frame because direction could have changed:
+            # Adjusting the image of the item to match the hand of the owner:
+            # Needs to be done each frame since the direction may have changed:
             self.adjust_image()
 
         super().draw(draw_offset)
 
     def update(self):
+        # Drawing the item if it is in use:
+        if self.in_use:
+            self.draw(self.level.get_draw_offset())
         self.update_cooldown()
 
 
-class Potion(Item):
+class Potion(Item):  # [TESTED & FINALISED]
 
     def __init__(self, game, name, health_boost, use_duration, image_path, size, owner=None, position=(0, 0)):
         super().__init__(game, name, use_duration, image_path, size, owner, position)
 
+        # The increase in health of the owner when the potion is consumed:
         self.health_boost = health_boost
 
         # Whether the item has been used
@@ -142,8 +139,10 @@ class Potion(Item):
 
     def use(self):
         super().use()
+        # Increasing the health of the owner by the boost amount:
         self.owner.add_health(self.health_boost)
-        # Setting consumed flag true so it is destroyed after it is used:
+        # Setting a flag to indicate that the item has been consumed,
+        # so that it is destroyed after the use is finished:
         self.consumed = True
 
     def properties(self):
@@ -163,7 +162,7 @@ class Potion(Item):
             self.owner.destroy_item(self)
 
 
-class Weapon(Item):
+class Weapon(Item):  # [TESTED & FINALISED]
     # Weapons can have images with different directions:
     UP = "up.png"
     DOWN = "down.png"
@@ -172,12 +171,9 @@ class Weapon(Item):
 
     def __init__(self, game, name, damage,  use_duration, image_path, size, owner=None, position=(0, 0), ):
         super().__init__(game, name, use_duration, image_path, size, owner, position)
+
+        # The damage to be dealt per second to any vulnerable sprite when impacted:
         self.damage = damage
-
-        # How long it takes to use item.
-        self.use_duration = use_duration
-
-        self.import_images()
 
     def adjust_image(self):
         # A different image is shown depending on which way the player is facing:
@@ -204,10 +200,9 @@ class Weapon(Item):
         self.adjust_collider()
 
     def import_images(self):
-        # A dictionary of animation folder names and lists of images in the folders:
-
         self.images = {self.UP: [], self.DOWN: [], self.LEFT: [], self.RIGHT: [], self.ICON: []}
 
+        # Filling the image dictionary with images for each direction and the icon:
         for file_name in self.images.keys():
             final_path = self.image_path + "/" + file_name
             self.images[file_name] = resize_image(pygame.image.load(final_path).convert_alpha(), self.max_size)
@@ -228,6 +223,7 @@ class Weapon(Item):
         return self.damage
 
     def check_hit(self):
+        # Obtaining vulnerable tiles in frame from the level:
         vulnerable_tiles = self.game.get_current_level().get_vulnerable_tiles().copy()
 
         # Weapon should not damage the owner:
@@ -235,13 +231,11 @@ class Weapon(Item):
 
         for tile in vulnerable_tiles:
             if self.collider.colliderect(tile.get_collider()):
+                # Applying damage to vulnerable tile:
                 tile.receive_damage(self.damage * self.game.get_current_frame_time())
 
     def update(self):
         super().update()
         if self.in_use:
             self.check_hit()
-
-
-
 

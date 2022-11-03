@@ -3,10 +3,6 @@ from abc import ABC, abstractmethod
 from utils import *
 import pygame
 
-# TODO: DO NOT MODIFY UNNECESSARILY BEFORE FINISHING PROJECT - Maybe at the end:
-#  Add getter & setter for Margin & Padding
-#  Allow relative placement to be changed after instantiation
-#  Create ViewGroup class that allows multiple views to be treated as one
 
 """
 This is my own UI framework, providing a dynamic component library, layout management, and responsive rendering.

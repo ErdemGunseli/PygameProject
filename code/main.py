@@ -7,8 +7,7 @@ from strings import *
 from database_helper import DatabaseHelper
 
 
-# Main game class: [TESTED & FINALISED]
-class Game:
+class Game:  # [TESTED & FINALISED]
 
     def __init__(self):
         pygame.init()

@@ -57,12 +57,12 @@ class Level:  # [TESTED & FINALISED]
 
         # Importing map data:
         self.map_set_up = False
-        self.level_id = level_id
+        self.id = level_id
         # Obtaining a list of item/object positions and surfaces by layer using pytmx:
-        self.tmx_data = load_pygame(Utils().get_level_path(self.level_id))
+        self.tmx_data = load_pygame(Utils().get_level_path(self.id))
 
         # Background colour of the map:
-        self.background_colour = Utils().get_level_colour(self.level_id)
+        self.background_colour = Utils().get_level_colour(self.id)
 
         # Draw offset amount for the simulated camera:
         self.draw_offset = pygame.math.Vector2()
@@ -86,7 +86,7 @@ class Level:  # [TESTED & FINALISED]
         self.item_tiles_in_frame = pygame.sprite.Group()  # Item sprites that are on-screen.
 
     def get_id(self):
-        return self.level_id
+        return self.id
 
     def set_up_map(self):
         if self.map_set_up: return
@@ -345,7 +345,7 @@ class Level:  # [TESTED & FINALISED]
         self.quest_board_views.append(self.btn_next_level)
 
         # Level Name Text:
-        self.txt_level_name = TextLine(self.game, text=Utils().LEVELS[self.level_id][Utils.NAME], font_size=0.04,
+        self.txt_level_name = TextLine(self.game, text=Utils().LEVELS[self.id][Utils.NAME], font_size=0.04,
                                        above=self.txt_info, margin=0, padding=0.015, frame_condition=View.ALWAYS,
                                        frame_thickness=0, text_colour=WHITE)
         self.quest_board_views.append(self.txt_level_name)
@@ -356,8 +356,8 @@ class Level:  # [TESTED & FINALISED]
                                   frame_condition=View.ALWAYS)
         self.quest_board_views.append(self.txt_error)
 
-    def update_quest_board_data(self):
-        # Manually updating the position of the quest board info text:
+    def update_quest_board_views(self):
+        # Manually placing the info text on top of the quest board:
         self.txt_info.get_rect().midbottom = self.quest_board.get_rect().midtop + pygame.Vector2(
             self.draw_offset) - pygame.Vector2(0, self.txt_info.get_margin())
 
@@ -380,7 +380,7 @@ class Level:  # [TESTED & FINALISED]
             # Increasing the level id and starting the level
             if len(self.hostile_tiles) == 0:
                 # Increasing the level id:
-                self.game.update_level_id(self.level_id + 1)
+                self.game.update_level_id(self.id + 1)
                 self.set_done(True)
             else:
                 self.txt_error.set_visibility(True)
@@ -406,4 +406,5 @@ class Level:  # [TESTED & FINALISED]
         if self.quest_board is not None:
             self.draw_quest_board_indicator()
             if self.quest_board in self.depth_tiles_in_frame:
-                self.update_quest_board_data()
+                # Only updating quest board information if it is in the frame:
+                self.update_quest_board_views()

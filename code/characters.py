@@ -431,7 +431,7 @@ class Player(Character):  # [TESTED & FINALISED]
     def update(self):
         super().update()
         self.handle_input()
-        self.handle_item_collision()
+        # self.handle_item_collision()
         self.move(self.BASE_SPEED * self.stats[self.SPEED_MULTIPLIER])
 
 

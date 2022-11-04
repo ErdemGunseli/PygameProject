@@ -511,7 +511,7 @@
   <objectgroup id="4" name="Quest Board">
    <object id="1" gid="78" x="704.993" y="1053.06" width="593.939" height="565.788"/>
   </objectgroup>
-  <layer id="5" name="Barriers" width="30" height="30" visible="0" opacity="0.17">
+  <layer id="5" name="Barriers" width="30" height="30">
    <data encoding="csv">
 107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,
 107,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,107,
@@ -545,7 +545,7 @@
 107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107
 </data>
   </layer>
-  <objectgroup id="14" name="Colliders" visible="0" opacity="0.35">
+  <objectgroup id="14" name="Colliders" opacity="0.45">
    <object id="154" gid="107" x="770" y="870" width="460" height="196"/>
   </objectgroup>
  </group>

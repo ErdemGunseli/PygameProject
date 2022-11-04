@@ -275,6 +275,8 @@ class Level:  # [TESTED & FINALISED]
 
     def set_done(self, value):
         self.done = value
+        # Saving the player's progress:
+        self.database_helper.update_player(self.player)
 
     def calculate_display_lines(self):
         # The 4 line segments (represented as groups of 2 points) that make up the display:
@@ -377,9 +379,8 @@ class Level:  # [TESTED & FINALISED]
             # Restarting the level:
             self.set_done(True)
         elif self.btn_next_level.clicked():
-            # Increasing the level id and starting the level
+            # Increasing the level id and starting the level:
             if len(self.hostile_tiles) == 0:
-                # Increasing the level id:
                 self.game.update_level_id(self.id + 1)
                 self.set_done(True)
             else:
@@ -405,6 +406,8 @@ class Level:  # [TESTED & FINALISED]
         # Ensuring that there is a quest board in the map:
         if self.quest_board is not None:
             self.draw_quest_board_indicator()
-            if self.quest_board in self.depth_tiles_in_frame:
+            # The quest board does not need to be drawn if not on-screen:
+            if self.player.get_distance_to(self.quest_board.get_rect().center) < \
+                    2 * Utils().get_min_tile_count(self.id) * self.tile_size:
                 # Only updating quest board information if it is in the frame:
                 self.update_quest_board_views()

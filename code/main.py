@@ -86,6 +86,8 @@ class Game:  # [TESTED & FINALISED]
         if level_id not in Utils().LEVELS.keys():
             level_id = 0
 
+        # Updating the current level id:
+        self.current_level.get_player().get_stats()[Player.CURRENT_LEVEL_ID] = level_id
         self.database_helper.update_player_stats({Player.CURRENT_LEVEL_ID: level_id})
 
     def refresh_current_level(self):

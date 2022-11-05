@@ -431,7 +431,7 @@ class Player(Character):  # [TESTED & FINALISED]
     def update(self):
         super().update()
         self.handle_input()
-        # self.handle_item_collision()
+        self.handle_item_collision()
         self.move(self.BASE_SPEED * self.stats[self.SPEED_MULTIPLIER])
 
 
@@ -471,7 +471,7 @@ class Enemy(Character):  # [TESTED & FINALISED]
         # The health bar above the enemy's head:
         self.health_bar = ProgressBar(self.game, font_size=0.02,
                                       start_progress=self.stats[self.CURRENT_HEALTH] / self.stats[self.FULL_HEALTH],
-                                      bar_size=self.game.pixel_to_unit_point((self.tile_size, 0.2 * self.tile_size,)),
+                                      size=self.game.pixel_to_unit_point((self.tile_size, 0.2 * self.tile_size,)),
                                       padding=game.pixel_to_unit(0.1 * self.tile_size),
                                       margin=0.005,
                                       frame_thickness=game.pixel_to_unit(0.05 * self.tile_size))

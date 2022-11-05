@@ -1,7 +1,7 @@
 # Contains all text strings used within the game: [DONE]
 
 # ~~ Game ~~ #
-GAME_NAME = "GAME NAME"
+GAME_NAME = "THE GAME"
 PLACEHOLDER = "_"
 RESOLUTION_FORMAT = "{} x {}"
 
@@ -57,9 +57,7 @@ GOT_IT = "Got It"
 YOU_DIED = "You Died"
 
 # ~~ Quest Board ~~ #
-QUEST_BOARD_TEXT = (
-                    "Quest Board\n"
-                    "(Optional) Find & Collect {} Items\n"
+QUEST_BOARD_TEXT = ("(Optional) Find & Collect {} Items\n"
                     "(Main) Find & Kill All Enemies\n"
                     "Enemies Remaining: {}")
 NEXT_LEVEL = "Next Level"

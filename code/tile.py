@@ -79,11 +79,6 @@ class Tile(pygame.sprite.Sprite):  # [TESTED & FINALISED]
         self.rect.topleft = position
         self.collider.topleft = position
 
-    def draw(self, draw_offset):
-        pygame.display.get_surface().blit(self.image, self.rect.topleft + draw_offset)
-        # Drawing the collider (for debugging, testing etc.):
-        # self.draw_collider(draw_offset)
-
     def draw_collider(self, draw_offset):
         # The image of the collider (for debugging, testing etc.):
         self.collider_image = pygame.Surface(self.collider.size)
@@ -92,3 +87,8 @@ class Tile(pygame.sprite.Sprite):  # [TESTED & FINALISED]
         self.collider_image.fill(RED)
         # Drawing the collider:
         pygame.display.get_surface().blit(self.collider_image, self.collider.topleft + draw_offset)
+
+    def draw(self, draw_offset):
+        pygame.display.get_surface().blit(self.image, self.rect.topleft + draw_offset)
+        # Drawing the collider (for debugging, testing etc.):
+        # self.draw_collider(draw_offset)

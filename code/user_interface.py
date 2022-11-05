@@ -42,6 +42,8 @@ class View(ABC, pygame.sprite.Sprite):
                  frame_colour=BLACK, frame_hover_colour=None):
         super().__init__()
 
+
+
         # The game is passed as an argument to access some of its attributes and methods:
         self.game = game
 
@@ -428,7 +430,7 @@ class Image(View):
         icon_width = current_icon_size_px[0]
         icon_height = current_icon_size_px[1]
 
-        if icon_width > icon_height:
+        if (icon_width / max_icon_size_px[0]) > (icon_height / max_icon_size_px[1]):
             # If width greater than height, adjusting width to fit max width,
             # then multiplying height with the scale factor:
             scale_factor = max_icon_size_px[0] / icon_width
@@ -574,7 +576,7 @@ class TextInput(TextLine):
                  margin=0.02, padding=0.02,
                  frame_condition=View.ALWAYS, frame_thickness=0.005, corner_radius=0.01,
                  frame_colour=BLACK, text_colour=BLACK, frame_hover_colour=SMOKE, text_hover_colour=SMOKE,
-                 frame_focus_colour=IRIS, text_focus_colour=IRIS):
+                 frame_focus_colour=BLUE_GREY, text_focus_colour=BLUE_GREY):
         # The input type that is allowed:
         self.input_type = input_type
 
@@ -925,7 +927,7 @@ class Slider(View):
                  position=(0, 0), above=None, below=None, to_left_of=None, to_right_of=None, between=None,
                  margin=0.02, padding=0.02,
                  frame_condition=View.NEVER, frame_thickness=0.005, corner_radius=0.01, frame_colour=BLACK,
-                 bar_colour=SILVER, handle_colour=BLACK, frame_hover_colour=None, handle_hover_colour=IRIS):
+                 bar_colour=SILVER, handle_colour=BLACK, frame_hover_colour=None, handle_hover_colour=BLUE_GREY):
         # The slider can have values between 0-1 for each axis.
         # Ensuring that the slider is centred on the axis it cannot slide, by setting value to 0.5:
         start_value = list(start_value)
@@ -1046,7 +1048,7 @@ class Slider(View):
 # A progress bar: [TESTED & FINALISED]
 class ProgressBar(View):
 
-    def __init__(self, game, font_size=0.03, bar_size=(0.25, 0.025), start_progress=0,
+    def __init__(self, game, font_size=0.03, size=(0.25, 0.025), start_progress=0,
                  orientation=View.HORIZONTAL, visible=True, show_progress_text=True,
                  position=(0, 0), above=None, below=None, to_left_of=None, to_right_of=None, between=None,
                  margin=0.02, padding=0.01,
@@ -1073,7 +1075,7 @@ class ProgressBar(View):
                                       text_colour=text_colour,
                                       text_hover_colour=text_hover_colour)
 
-        super().__init__(game, size=bar_size, visible=visible,
+        super().__init__(game, size=size, visible=visible,
                          position=position, above=above, below=below, to_left_of=to_left_of, to_right_of=to_right_of,
                          between=between,
                          margin=margin, padding=padding,

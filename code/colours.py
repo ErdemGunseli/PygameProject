@@ -22,6 +22,7 @@ TEAL = (0, 128, 128)
 NAVY = (0, 0, 128)
 
 # ~~ Other ~~ #
+LIGHT_BLUE_GREY = (195, 200, 225)
 PLATINUM = (229, 228, 226)
 SMOKE = (132, 136, 132)
-IRIS = (93, 63, 211)
+BLUE_GREY = (115, 147, 179)

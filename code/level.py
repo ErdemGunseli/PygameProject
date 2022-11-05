@@ -40,7 +40,6 @@ class Level:  # [TESTED & FINALISED]
         self.btn_next_level = None
         self.btn_restart_level = None
         self.txt_level_name = None
-        self.txt_error = None
 
         # Setting up display:
         self.display = pygame.display.get_surface()
@@ -69,21 +68,26 @@ class Level:  # [TESTED & FINALISED]
 
         # Groups determining how the sprites should be categorised.
         # Groups are not mutually exclusive:
-        self.all_tiles = pygame.sprite.Group()  # All the sprites in the level.
-        self.flat_tiles = pygame.sprite.Group()  # Sprites with no depth effect - flat items in the background.
-        self.depth_tiles = pygame.sprite.Group()  # Sprites with depth effect - 3D items to be represented in 2D.
-        self.dynamic_tiles = pygame.sprite.Group()  # Sprites that should be updated if they are on-screen.
-        self.obstacle_tiles = pygame.sprite.Group()  # Sprites that have collision.
-        self.item_tiles = pygame.sprite.Group()  # Sprites that are items on the ground.
-        self.hostile_tiles = pygame.sprite.Group()  # Sprites that are hostile to the player.
-        self.vulnerable_tiles = pygame.sprite.Group()  # Sprites that have health.
+        self.flat_tiles = []  # Sprites with no depth effect - flat items in the background.
+        self.depth_tiles = []  # Sprites with depth effect - 3D items to be represented in 2D.
+        self.dynamic_tiles = []  # Sprites that should be updated if they are on-screen.
+        self.obstacle_tiles = []  # Sprites that have collision.
+        self.item_tiles = []  # Sprites that are items on the ground.
+        self.hostile_tiles = []  # Sprites that are hostile to the player.
+        self.vulnerable_tiles = []  # Sprites that have health.
+
+        # A list of all individual lists:
+        # No need to do this for in-frame lists since they are calculated every frame from the following lists:
+        self.tile_lists = [self.flat_tiles, self.depth_tiles, self.dynamic_tiles, self.obstacle_tiles,
+                           self.item_tiles, self.hostile_tiles, self.vulnerable_tiles]
 
         # Groups for tiles in frame (re-calculated each frame):
-        self.flat_tiles_in_frame = pygame.sprite.Group()  # Flat sprites that are on-screen.
-        self.depth_tiles_in_frame = pygame.sprite.Group()  # Depth sprites that are on-screen.
-        self.dynamic_tiles_in_frame = pygame.sprite.Group()  # Dynamic sprites that are on-screen
-        self.obstacle_tiles_in_frame = pygame.sprite.Group()  # Obstacle sprites that are on-screen.
-        self.item_tiles_in_frame = pygame.sprite.Group()  # Item sprites that are on-screen.
+        self.flat_tiles_in_frame = []  # Flat sprites that are on-screen.
+        self.depth_tiles_in_frame = []  # Depth sprites that are on-screen.
+        self.dynamic_tiles_in_frame = []  # Dynamic sprites that are on-screen
+        self.obstacle_tiles_in_frame = []  # Obstacle sprites that are on-screen.
+        self.item_tiles_in_frame = []  # Item sprites that are on-screen.
+        self.vulnerable_tiles_in_frame = []  # Vulnerable sprites that are on-screen.
 
     def get_id(self):
         return self.id
@@ -127,25 +131,18 @@ class Level:  # [TESTED & FINALISED]
                  vulnerable=False):
         # Adding tile into relevant groups:
         if visible:
-            if depth: self.depth_tiles.add(tile)
-            else: self.flat_tiles.add(tile)
-        if obstacle: self.obstacle_tiles.add(tile)
-        if dynamic: self.dynamic_tiles.add(tile)
-        if item: self.item_tiles.add(tile)
-        if hostile: self.hostile_tiles.add(tile)
-        if vulnerable: self.vulnerable_tiles.add(tile)
-        self.all_tiles.add(tile)
+            if depth: self.depth_tiles.append(tile)
+            else: self.flat_tiles.append(tile)
+        if obstacle: self.obstacle_tiles.append(tile)
+        if dynamic: self.dynamic_tiles.append(tile)
+        if item: self.item_tiles.append(tile)
+        if hostile: self.hostile_tiles.append(tile)
+        if vulnerable: self.vulnerable_tiles.append(tile)
 
     def remove_tile(self, tile):
         # Removing tile from all groups:
-        self.all_tiles.remove(tile)
-        self.flat_tiles.remove(tile)
-        self.depth_tiles.remove(tile)
-        self.dynamic_tiles.remove(tile)
-        self.obstacle_tiles.remove(tile)
-        self.item_tiles.remove(tile)
-        self.hostile_tiles.remove(tile)
-        self.vulnerable_tiles.remove(tile)
+        for tile_list in self.tile_lists:
+            if tile in tile_list: tile_list.remove(tile)
         # No need to remove from in_frame groups, since these are re-calculated each frame.
 
     def set_up_layer(self, layer_name, collider_ratio=(0.9, 0.9), visible=True, depth=True, obstacle=True,
@@ -217,12 +214,12 @@ class Level:  # [TESTED & FINALISED]
                                   hostile=hostile, vulnerable=vulnerable)
 
     def get_tiles_in_frame(self, group):
-        tiles_in_frame = pygame.sprite.Group()
+        tiles_in_frame = []
 
         for sprite in group:
             # Checking collision with screen rectangle and rectangle of the sprite's image:
             if pygame.Rect.colliderect(sprite.rect, self.display_rect):
-                tiles_in_frame.add(sprite)
+                tiles_in_frame.append(sprite)
 
         return tiles_in_frame
 
@@ -237,6 +234,8 @@ class Level:  # [TESTED & FINALISED]
         # The following are used for collision by the player & enemies:
         self.obstacle_tiles_in_frame = self.get_tiles_in_frame(self.obstacle_tiles)
         self.item_tiles_in_frame = self.get_tiles_in_frame(self.item_tiles)
+        # For collision with weapons:
+        self.vulnerable_tiles_in_frame = self.get_tiles_in_frame(self.vulnerable_tiles)
 
     def draw_map(self):
         # Calculating how far the player is from the centre of the screen,
@@ -261,8 +260,8 @@ class Level:  # [TESTED & FINALISED]
     def get_item_tiles_in_frame(self):
         return self.item_tiles_in_frame
 
-    def get_vulnerable_tiles(self):
-        return self.vulnerable_tiles
+    def get_vulnerable_tiles_in_frame(self):
+        return self.vulnerable_tiles_in_frame
 
     def get_tile_size(self):
         return self.tile_size
@@ -279,9 +278,10 @@ class Level:  # [TESTED & FINALISED]
         self.database_helper.update_player(self.player)
 
     def calculate_display_lines(self):
+        # Centering the display rectangle:
+        self.display_rect.center = self.player.get_rect().center
         # The 4 line segments (represented as groups of 2 points) that make up the display:
         # Used for drawing indicators where lines connecting items of interest and the screen lines intersect:
-        self.display_rect.center = self.player.get_rect().center
         top = (self.display_rect.topleft, self.display_rect.topright)
         right = (self.display_rect.topright, self.display_rect.bottomright)
         bottom = (self.display_rect.bottomright, self.display_rect.bottomleft)
@@ -352,11 +352,6 @@ class Level:  # [TESTED & FINALISED]
                                        frame_thickness=0, text_colour=WHITE)
         self.quest_board_views.append(self.txt_level_name)
 
-        # Error Text:
-        self.txt_error = TextLine(self.game, text=NEXT_LEVEL_ERROR, above=self.txt_level_name, font_size=0.02,
-                                  margin=0.01, visible=False, text_colour=WHITE, frame_colour=RED, frame_thickness=0,
-                                  frame_condition=View.ALWAYS)
-        self.quest_board_views.append(self.txt_error)
 
     def update_quest_board_views(self):
         # Manually placing the info text on top of the quest board:
@@ -365,8 +360,6 @@ class Level:  # [TESTED & FINALISED]
 
         # Updating the text of the quest board info text:
         self.txt_info.set_text(QUEST_BOARD_TEXT.format(len(self.item_tiles), len(self.hostile_tiles)))
-        # Setting the first line of the info text to have a higher font size than the rest:
-        self.txt_info.get_text_lines()[0].set_font_size(0.04)
 
         # If all hostiles are dead, showing button in green:
         if len(self.hostile_tiles) == 0:
@@ -383,11 +376,6 @@ class Level:  # [TESTED & FINALISED]
             if len(self.hostile_tiles) == 0:
                 self.game.update_level_id(self.id + 1)
                 self.set_done(True)
-            else:
-                self.txt_error.set_visibility(True)
-        elif self.txt_error.clicked():
-            # If the error message is clicked, hiding it:
-            self.txt_error.set_visibility(False)
 
         for view in self.quest_board_views: view.update()
 
@@ -399,7 +387,7 @@ class Level:  # [TESTED & FINALISED]
         # Calculating which tiles are in the frame and need to be processed further:
         self.calculate_tiles_in_frame()
         # Updating tiles that need to be updated:
-        self.dynamic_tiles_in_frame.update()
+        for tile in self.dynamic_tiles_in_frame: tile.update()
 
         # Drawing indicators for enemies:
         self.draw_hostile_indicators()
@@ -407,7 +395,6 @@ class Level:  # [TESTED & FINALISED]
         if self.quest_board is not None:
             self.draw_quest_board_indicator()
             # The quest board does not need to be drawn if not on-screen:
-            if self.player.get_distance_to(self.quest_board.get_rect().center) < \
-                    2 * Utils().get_min_tile_count(self.id) * self.tile_size:
+            if self.quest_board in self.depth_tiles_in_frame:
                 # Only updating quest board information if it is in the frame:
                 self.update_quest_board_views()

@@ -11,10 +11,10 @@ def percentage_format(float_value):
 
 
 # Places all image surfaces in a directory into a list:
-def import_images(path):
+def import_images(folder_path):
     images = []
 
-    for _, __, image_files in walk(path):
+    for _, __, image_files in walk(folder_path):
         # Iterable contains a tuple with the following items:
         #   0: path to the folder
         #   1: List of folders in path
@@ -22,7 +22,7 @@ def import_images(path):
 
         for image_file in image_files:
             # The full path of image:
-            full_path = path + "/" + image_file
+            full_path = folder_path + "/" + image_file
 
             image_surface = pygame.image.load(full_path).convert_alpha()
             images.append(image_surface)
@@ -36,7 +36,7 @@ def resize_image(image, size):
     width = current_image_size[0]
     height = current_image_size[1]
 
-    if width > height:
+    if (width / size[0]) > (height / size[1]):
         scale_factor = size[0] / width
         width = size[0]
         height *= scale_factor
@@ -231,7 +231,7 @@ class Utils:
         # Importing items inside the function to avoid circular imports:
         import items
 
-        path = self.ITEMS[item_name][self.PATH]
+        item_image_path = self.ITEMS[item_name][self.PATH]
         item_type = self.ITEMS[item_name][self.TYPE]
         length = self.ITEMS[item_name][self.LENGTH]
         use_duration = self.ITEMS[item_name][self.USE_DURATION]
@@ -241,11 +241,11 @@ class Utils:
 
             case self.WEAPON:
                 damage = self.ITEMS[item_name][self.DAMAGE]
-                item = items.Weapon(game, item_name, damage, use_duration, path, (length, length))
+                item = items.Weapon(game, item_name, damage, use_duration, item_image_path, (length, length))
 
             case self.POTION:
                 healing = self.ITEMS[item_name][self.HEALING]
-                item = items.Potion(game, item_name, healing, use_duration, path, (length, length))
+                item = items.Potion(game, item_name, healing, use_duration, item_image_path, (length, length))
 
             case _:
                 item = None

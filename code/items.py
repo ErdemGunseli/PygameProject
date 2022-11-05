@@ -232,7 +232,7 @@ class Weapon(Item):  # [TESTED & FINALISED]
 
     def check_hit(self):
         # Obtaining vulnerable tiles in frame from the level:
-        vulnerable_tiles = self.game.get_current_level().get_vulnerable_tiles().copy()
+        vulnerable_tiles = self.game.get_current_level().get_vulnerable_tiles_in_frame().copy()
 
         # Weapon should not damage the owner:
         if self.owner in vulnerable_tiles: vulnerable_tiles.remove(self.owner)

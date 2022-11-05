@@ -1,10 +1,5 @@
-import random
-
 import pygame.mixer
-
-from assets import *
 from pygame import mixer
-from user_interface import *
 from level import *
 from strings import *
 from database_helper import DatabaseHelper
@@ -30,7 +25,7 @@ class Game:  # [TESTED & FINALISED]
         # Getting the current resolution of the physical screen:
         screen_info = pygame.display.Info()
         self.resolution = [screen_info.current_w, screen_info.current_h]
-        self.screen = pygame.display.set_mode(self.resolution, pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode(self.resolution, pygame.FULLSCREEN, vsync=1)
         self.rect = self.screen.get_rect()
         pygame.display.set_caption(GAME_NAME)
         self.clock = pygame.time.Clock()
@@ -153,6 +148,7 @@ class Game:  # [TESTED & FINALISED]
         self.current_music.set_volume(audio_volume * self.MUSIC_VOLUME_MULTIPLIER)
 
     def set_music(self, music, fade_out=1000, fade_in=1000):
+        # Expensive - 0.25s per call:
         self.current_music.fadeout(fade_out)
         self.current_music = pygame.mixer.Sound(music)
         self.current_music.set_volume(self.audio_volume * self.MUSIC_VOLUME_MULTIPLIER)
@@ -234,17 +230,16 @@ class Game:  # [TESTED & FINALISED]
         # Title Text:
         txt_title = TextLine(self,
                              text=GAME_NAME,
+                             frame_condition=View.ALWAYS,
                              between=(self.rect.midtop,
                                       btn_play),
-                             frame_condition=View.ALWAYS,
                              font_size=0.25)
-        txt_title.set_italic(True)
         views.append(txt_title)
 
         # <!> __UI LAYOUT__ <!>
 
         while not self.done:
-            self.screen.fill(WHITE)
+            self.screen.fill(LIGHT_BLUE_GREY)
             self.update()
 
             if self.key_pressed(pygame.K_1):
@@ -371,7 +366,7 @@ class Game:  # [TESTED & FINALISED]
         # <!> __UI LAYOUT__ <!>
 
         while not self.done:
-            self.screen.fill(WHITE)
+            self.screen.fill(LIGHT_BLUE_GREY)
             self.update()
 
             # If the frame rate has been changed and the frame rate input is not empty, setting it to the attribute:
@@ -437,7 +432,7 @@ class Game:  # [TESTED & FINALISED]
         # <!> __UI LAYOUT__ <!>
 
         while not self.done:
-            self.screen.fill(WHITE)
+            self.screen.fill(LIGHT_BLUE_GREY)
             self.update()
 
             # Exit if exit button or escape clicked, returning to the previous menu:
@@ -540,7 +535,7 @@ class Game:  # [TESTED & FINALISED]
         # <!> __UI LAYOUT__ <!>
 
         while not self.done:
-            self.screen.fill(WHITE)
+            self.screen.fill(LIGHT_BLUE_GREY)
             self.update()
 
             if self.key_pressed(pygame.K_ESCAPE):
@@ -809,7 +804,7 @@ class Game:  # [TESTED & FINALISED]
         views.append(btn_back)
 
         while not self.done:
-            self.screen.fill(WHITE)
+            self.screen.fill(LIGHT_BLUE_GREY)
             self.update()
 
             if self.key_pressed(pygame.K_ESCAPE): return
@@ -821,7 +816,7 @@ class Game:  # [TESTED & FINALISED]
                 pr_test.set_progress(sl_text_size.get_value()[0])
 
             elif pr_test.clicked():
-                pr_test.set_progress_colour(random.choice([RED, GREEN, BLUE, CYAN, MAGENTA, MAROON, IRIS]))
+                pr_test.set_progress_colour(random.choice([RED, GREEN, BLUE, CYAN, MAGENTA, MAROON, BLUE_GREY]))
             elif btn_left.clicked():
                 txt_paragraph.set_alignment(Text.LEFT)
             elif btn_centre.clicked():
@@ -852,4 +847,16 @@ class Game:  # [TESTED & FINALISED]
 
 
 if __name__ == "__main__":
-    Game().show_main_menu()
+    # Game().show_main_menu()
+
+    # TESTING:
+    import cProfile
+    import pstats
+
+    with cProfile.Profile() as pr:
+        Game().show_main_menu()
+
+    stats = pstats.Stats(pr)
+    stats.sort_stats(pstats.SortKey.TIME)
+    # stats.print_stats()
+    stats.dump_stats(filename="../program.prof")

@@ -239,7 +239,7 @@ class Game:  # [TESTED & FINALISED]
         # <!> __UI LAYOUT__ <!>
 
         while not self.done:
-            self.screen.fill(LIGHT_BLUE_GREY)
+            self.screen.fill(WHITE)
             self.update()
 
             if self.key_pressed(pygame.K_1):
@@ -366,7 +366,7 @@ class Game:  # [TESTED & FINALISED]
         # <!> __UI LAYOUT__ <!>
 
         while not self.done:
-            self.screen.fill(LIGHT_BLUE_GREY)
+            self.screen.fill(WHITE)
             self.update()
 
             # If the frame rate has been changed and the frame rate input is not empty, setting it to the attribute:
@@ -432,7 +432,7 @@ class Game:  # [TESTED & FINALISED]
         # <!> __UI LAYOUT__ <!>
 
         while not self.done:
-            self.screen.fill(LIGHT_BLUE_GREY)
+            self.screen.fill(WHITE)
             self.update()
 
             # Exit if exit button or escape clicked, returning to the previous menu:
@@ -535,7 +535,7 @@ class Game:  # [TESTED & FINALISED]
         # <!> __UI LAYOUT__ <!>
 
         while not self.done:
-            self.screen.fill(LIGHT_BLUE_GREY)
+            self.screen.fill(WHITE)
             self.update()
 
             if self.key_pressed(pygame.K_ESCAPE):
@@ -804,7 +804,7 @@ class Game:  # [TESTED & FINALISED]
         views.append(btn_back)
 
         while not self.done:
-            self.screen.fill(LIGHT_BLUE_GREY)
+            self.screen.fill(WHITE)
             self.update()
 
             if self.key_pressed(pygame.K_ESCAPE): return

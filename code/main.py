@@ -544,10 +544,10 @@ class Game:  # [TESTED & FINALISED]
             # If the player is adjusting the stats, updating the stats text and variable values:
             elif sl_stats.handle_held:
                 slider_value = sl_stats.get_value()
-                health_val = round(health[0] + get_range(health) * (1 - slider_value[1]), 2)
-                speed_val = round(speed[0] + get_range(speed) * slider_value[1], 2)
-                damage_val = round(min(damage) + get_range(damage) * (1 - slider_value[0]), 2)
-                stealth_val = round(stealth[0] + get_range(stealth) * slider_value[0], 2)
+                health_val = health[0] + get_range(health) * (1 - slider_value[1])
+                speed_val = speed[0] + get_range(speed) * slider_value[1]
+                damage_val = damage[0] + get_range(damage) * (1 - slider_value[0])
+                stealth_val = stealth[0] + get_range(stealth) * slider_value[0]
                 txt_stats.set_text(CHARACTER_STATS.format(percentage_format(health_val),
                                                           percentage_format(speed_val),
                                                           percentage_format(damage_val),

@@ -346,7 +346,6 @@ class Player(Character):  # [TESTED & FINALISED]
         self.damaged_sound = pygame.mixer.Sound(PLAYER_DAMAGED)
         self.item_pickup_sound = pygame.mixer.Sound(ITEM_PICKUP)
 
-
     def handle_input(self):
         # Player cannot move if an item is in use:
         if self.item_held.is_in_use():

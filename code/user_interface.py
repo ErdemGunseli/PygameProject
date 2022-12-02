@@ -22,7 +22,7 @@ class View(ABC, pygame.sprite.Sprite):
     NEVER = 0
     ALWAYS = 1
     HOVER = 2
-    FOCUS = 3
+    # FOCUS = 3
 
     # Text Alignment:
     # (Storing here so that it is accessible as a default value from Text constructor)
@@ -42,8 +42,6 @@ class View(ABC, pygame.sprite.Sprite):
                  frame_colour=BLACK, frame_hover_colour=None):
         super().__init__()
 
-
-
         # The game is passed as an argument to access some of its attributes and methods:
         self.game = game
 
@@ -60,7 +58,7 @@ class View(ABC, pygame.sprite.Sprite):
         # Converting the following from a ratio of the screen size to raw pixels:
         self.margin = self.game.unit_to_pixel(margin)
         self.padding = self.game.unit_to_pixel(padding)
-        self.thickness = self.game.unit_to_pixel(frame_thickness)
+        self.frame_thickness = self.game.unit_to_pixel(frame_thickness)
         self.corner_radius = self.game.unit_to_pixel(corner_radius)
 
         # When the frame/border/background should be shown:
@@ -85,6 +83,15 @@ class View(ABC, pygame.sprite.Sprite):
         self.between = between
 
         self.set_size(size)
+
+    def set_size(self, size):
+        # Setting accurate size including padding, whilst protecting the position of the centre:
+        centre = self.rect.center
+        self.rect.size = [dimension + 2 * self.padding for dimension in self.game.unit_to_pixel_point(size)]
+        self.rect.center = centre
+        # Because the size of the object has changed, the related objects may need to shift to provide space,
+        # so triggering this behaviour:
+        self.calculate_position()
 
     def calculate_position(self, exclude=None):
         # All UI elements keep a list of the UI elements that they are related to,
@@ -122,9 +129,6 @@ class View(ABC, pygame.sprite.Sprite):
     def add_relative(self, view):
         self.relatives.append(view)
 
-    def get_relatives(self):
-        return self.relatives
-
     def get_rect(self):
         return self.rect
 
@@ -134,57 +138,53 @@ class View(ABC, pygame.sprite.Sprite):
     def get_padding(self):
         return self.padding
 
-    def set_size(self, size):
-        # Setting accurate size including padding, whilst protecting the position of the centre:
-        centre = self.rect.center
-        self.rect.size = [dimension + 2 * self.padding for dimension in self.game.unit_to_pixel_point(size)]
-        self.rect.center = centre
-        # Because the size of the object has changed, the related objects may need to shift to provide space,
-        # so triggering this behaviour:
-        self.calculate_position()
-
-    def set_visibility(self, value):
-        self.visible = value
-
     def get_visibility(self):
         return self.visible
 
-    def place_above(self, relation):
-        if isinstance(relation, View):
+    def set_visibility(self, visibility):
+        self.visible = visibility
+
+    def place_above(self, above):
+        if isinstance(above, View):
             # Placing the current UI element above the stated UI element, taking into account margins:
-            self.rect.midbottom = (relation.get_rect().midtop[0],
-                                   relation.get_rect().midtop[1] - relation.get_margin() - self.margin)
+            self.rect.midbottom = (above.get_rect().midtop[0],
+                                   above.get_rect().midtop[1] - above.get_margin() - self.margin)
 
-        elif isinstance(relation, tuple) or isinstance(relation, list):
+        elif isinstance(above, tuple) or isinstance(above, list):
             # Placing the current UI element above the stated point, taking into account margins:
-            self.rect.midbottom = (relation[0], relation[1] - self.margin)
+            self.rect.midbottom = (above[0], above[1] - self.margin)
 
-    def place_below(self, relation):
-        if isinstance(relation, View):
+    def place_below(self, below):
+        if isinstance(below, View):
             # Placing the current UI element below the stated UI element, taking into account margins:
-            self.rect.midtop = (relation.get_rect().midbottom[0],
-                                relation.get_rect().midbottom[1] + relation.get_margin() + self.margin)
-        elif isinstance(relation, tuple) or isinstance(relation, list):
+            self.rect.midtop = (below.get_rect().midbottom[0],
+                                below.get_rect().midbottom[1] + below.get_margin() + self.margin)
+        elif isinstance(below, tuple) or isinstance(below, list):
             # Placing the current UI element below the stated point, taking into account margins:
-            self.rect.midtop = (relation[0], relation[1] + self.margin)
+            self.rect.midtop = (below[0], below[1] + self.margin)
 
-    def place_to_left_of(self, relation):
-        if isinstance(relation, View):
+    def place_to_left_of(self, to_left_of):
+        if isinstance(to_left_of, View):
             # Placing the current UI element below the stated UI element, taking into account margins:
-            self.rect.midright = (relation.get_rect().midleft[0] - relation.get_margin() - self.margin,
-                                  relation.get_rect().midleft[1])
-        elif isinstance(relation, tuple) or isinstance(relation, list):
+            self.rect.midright = (to_left_of.get_rect().midleft[0] - to_left_of.get_margin() - self.margin,
+                                  to_left_of.get_rect().midleft[1])
+        elif isinstance(to_left_of, tuple) or isinstance(to_left_of, list):
             # Placing the current UI element below the stated point, taking into account margins:
-            self.rect.midright = (relation[0] - self.margin, relation[1])
+            self.rect.midright = (to_left_of[0] - self.margin, to_left_of[1])
 
-    def place_to_right_of(self, relation):
-        if isinstance(relation, View):
+    def place_to_right_of(self, to_right_of):
+        if isinstance(to_right_of, View):
             # Placing the current UI element to the right of the stated UI element, taking into account margins:
-            self.rect.midleft = (relation.get_rect().midright[0] + relation.get_margin() + self.margin,
-                                 relation.get_rect().midright[1])
-        elif isinstance(relation, tuple) or isinstance(relation, list):
+            self.rect.midleft = (to_right_of.get_rect().midright[0] + to_right_of.get_margin() + self.margin,
+                                 to_right_of.get_rect().midright[1])
+        elif isinstance(to_right_of, tuple) or isinstance(to_right_of, list):
             # Placing the current UI element to the right of the stated point, taking into account margins:
-            self.rect.midbottom = (relation[0] + self.margin, relation[1] - self.margin)
+            self.rect.midbottom = (to_right_of[0] + self.margin, to_right_of[1] - self.margin)
+
+    @staticmethod
+    def get_midpoint(point_1, point_2):
+        # Returns the midpoint between two points:
+        return (point_1[0] + point_2[0]) / 2, (point_1[1] + point_2[1]) / 2
 
     def place_between(self, relations):
         points = []
@@ -200,13 +200,7 @@ class View(ABC, pygame.sprite.Sprite):
                 points.append(relation.get_rect().center)
             else:
                 points.append(relation)
-        self.rect.center = self.get_centre_between(points[0], points[1])
-
-    @staticmethod
-    def get_centre_between(point_1, point_2):
-        # Places the UI element to the centre of 2 pre-existing UI elements
-        value = (point_1[0] + point_2[0]) / 2, (point_1[1] + point_2[1]) / 2
-        return value
+        self.rect.center = self.get_midpoint(points[0], points[1])
 
     def get_frame_condition(self):
         return self.frame_condition
@@ -233,10 +227,10 @@ class View(ABC, pygame.sprite.Sprite):
         self.corner_radius = self.game.unit_to_pixel(corner_radius)
 
     def get_thickness(self):
-        return self.thickness
+        return self.frame_thickness
 
     def set_thickness(self, thickness):
-        self.thickness = self.game.unit_to_pixel(thickness)
+        self.frame_thickness = self.game.unit_to_pixel(thickness)
 
     def hovering(self):
         return self.rect.collidepoint(pygame.mouse.get_pos())
@@ -246,10 +240,7 @@ class View(ABC, pygame.sprite.Sprite):
 
     def draw_frame(self, colour):
         # Drawing the frame of the UI element with the specified colour:
-        pygame.draw.rect(self.display, colour, self.rect, self.thickness, self.corner_radius)
-
-    def update(self):
-        if self.visible: self.draw()
+        pygame.draw.rect(self.display, colour, self.rect, self.frame_thickness, self.corner_radius)
 
     def draw(self):
         # Determining how to draw the frame of the element:
@@ -257,6 +248,9 @@ class View(ABC, pygame.sprite.Sprite):
             self.draw_frame(self.frame_hover_colour)
         elif self.frame_condition == self.ALWAYS:
             self.draw_frame(self.frame_colour)
+
+    def update(self):
+        if self.visible: self.draw()
 
 
 # A single line of text: [TESTED & FINALISED]

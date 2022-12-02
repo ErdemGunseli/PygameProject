@@ -7,7 +7,7 @@ import random
 
 # Converts float value to a percentage string:
 def percentage_format(float_value):
-    return "{}%".format(int(float_value * 100))
+    return "{}%".format(round(float_value * 100))
 
 
 # Places all image surfaces in a directory into a list:

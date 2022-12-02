@@ -352,7 +352,6 @@ class Level:  # [TESTED & FINALISED]
                                        frame_thickness=0, text_colour=WHITE)
         self.quest_board_views.append(self.txt_level_name)
 
-
     def update_quest_board_views(self):
         # Manually placing the info text on top of the quest board:
         self.txt_info.get_rect().midbottom = self.quest_board.get_rect().midtop + pygame.Vector2(

@@ -492,6 +492,7 @@ class Button(View):
                                 corner_radius=corner_radius,
                                 frame_colour=frame_colour, frame_hover_colour=frame_hover_colour)
 
+        # Transferring attributes and methods from target.
         self.__class__ = self.target.__class__
         self.__dict__ = self.target.__dict__
 
@@ -1001,12 +1002,6 @@ class Slider(View):
     def draw_handle(self, colour):
         pygame.draw.circle(self.display, colour, self.handle_position, self.handle_radius)
 
-    def hovering(self):
-        mouse_pos = pygame.mouse.get_pos()
-        # Using the handle's radius to see if the mouse cursor is colliding with the handle:
-        return ((self.handle_position[0] - mouse_pos[0]) ** 2 + (
-                self.handle_position[1] - mouse_pos[1]) ** 2) ** 0.5 <= self.handle_radius
-
     def handle_grabbed(self):
         # Whether the handle has just been grabbed:
         return self.hovering() and self.game.mouse_pressed()
@@ -1023,6 +1018,12 @@ class Slider(View):
             return self.value
         else:
             return [round(item, decimal_places) for item in self.value]
+
+    def hovering(self):
+        mouse_pos = pygame.mouse.get_pos()
+        # Using the handle's radius to see if the mouse cursor is colliding with the handle:
+        return ((self.handle_position[0] - mouse_pos[0]) ** 2 + (
+                self.handle_position[1] - mouse_pos[1]) ** 2) ** 0.5 <= self.handle_radius
 
     def draw(self):
         # Drawing frame:

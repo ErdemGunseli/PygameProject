@@ -192,28 +192,32 @@ class Level:  # [TESTED & FINALISED]
                     tile_position = (x * self.tile_size, y * self.tile_size)
 
                     # Checking for special tiles for which the relevant object must be instantiated:
-                    if layer_name == PLAYER:
-                        self.player = self.database_helper.get_player()
-                        tile = self.player
-                        tile.set_top_left(tile_position)
-                    elif layer_name in ENEMY_NAMES:
-                        tile = Utils().get_enemy(self.game, layer_name)
-                        # Setting the position of the player using its collider:
-                        tile.set_top_left(tile_position)
-                    elif layer_name in ITEM_NAMES:
+                    if layer_name in ITEM_NAMES:
+                        # The item does not have an owner, to it is automatically added to the map,
+                        # there is no need to add it separately:
+                        # Therefore, we need to check for this condition first:
                         tile = Utils().get_item(self.game, layer_name)
                         tile.set_top_left(tile_position)
                     else:
-                        # Other tiles:
-                        tile = Tile(self.game, position=tile_position, collider_ratio=collider_ratio, image=surface,
-                                    # The aspect ratio of tiles should be protected:
-                                    protect_aspect_ratio=True)
+                        if layer_name == PLAYER:
+                            self.player = self.database_helper.get_player()
+                            tile = self.player
+                            tile.set_top_left(tile_position)
+                        elif layer_name in ENEMY_NAMES:
+                            tile = Utils().get_enemy(self.game, layer_name)
+                            # Setting the position of the player using its collider:
+                            tile.set_top_left(tile_position)
+                        else:
+                            # Other tiles:
+                            tile = Tile(self.game, position=tile_position, collider_ratio=collider_ratio, image=surface,
+                                        # The aspect ratio of tiles should be protected:
+                                        protect_aspect_ratio=True)
 
-                    # Adding tile to correct groups:
-                    self.add_tile(tile, visible=visible, depth=depth, obstacle=obstacle, dynamic=dynamic, item=item,
-                                  hostile=hostile, vulnerable=vulnerable)
+                        # Adding tile to correct groups:
+                        self.add_tile(tile, visible=visible, depth=depth, obstacle=obstacle, dynamic=dynamic, item=item,
+                                      hostile=hostile, vulnerable=vulnerable)
 
-    def get_tiles_in_frame(self, group):
+    def calculate_group_tiles_in_frame(self, group):
         tiles_in_frame = []
 
         for sprite in group:
@@ -223,19 +227,19 @@ class Level:  # [TESTED & FINALISED]
 
         return tiles_in_frame
 
-    def calculate_tiles_in_frame(self):
+    def calculate_all_tiles_in_frame(self):
         # Checking which sprites are on-screen, as we only need to be concerned with those:
-        self.flat_tiles_in_frame = self.get_tiles_in_frame(self.flat_tiles)
-        self.depth_tiles_in_frame = self.get_tiles_in_frame(self.depth_tiles)
+        self.flat_tiles_in_frame = self.calculate_group_tiles_in_frame(self.flat_tiles)
+        self.depth_tiles_in_frame = self.calculate_group_tiles_in_frame(self.depth_tiles)
 
         # The following is used to only update tiles if they are on-screen:
-        self.dynamic_tiles_in_frame = self.get_tiles_in_frame(self.dynamic_tiles)
+        self.dynamic_tiles_in_frame = self.calculate_group_tiles_in_frame(self.dynamic_tiles)
 
         # The following are used for collision by the player & enemies:
-        self.obstacle_tiles_in_frame = self.get_tiles_in_frame(self.obstacle_tiles)
-        self.item_tiles_in_frame = self.get_tiles_in_frame(self.item_tiles)
+        self.obstacle_tiles_in_frame = self.calculate_group_tiles_in_frame(self.obstacle_tiles)
+        self.item_tiles_in_frame = self.calculate_group_tiles_in_frame(self.item_tiles)
         # For collision with weapons:
-        self.vulnerable_tiles_in_frame = self.get_tiles_in_frame(self.vulnerable_tiles)
+        self.vulnerable_tiles_in_frame = self.calculate_group_tiles_in_frame(self.vulnerable_tiles)
 
     def draw_map(self):
         # Calculating how far the player is from the centre of the screen,
@@ -384,7 +388,7 @@ class Level:  # [TESTED & FINALISED]
         self.calculate_display_lines()
         self.draw_map()
         # Calculating which tiles are in the frame and need to be processed further:
-        self.calculate_tiles_in_frame()
+        self.calculate_all_tiles_in_frame()
         # Updating tiles that need to be updated:
         for tile in self.dynamic_tiles_in_frame: tile.update()
 

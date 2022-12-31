@@ -57,21 +57,16 @@ class Game:  # [TESTED & FINALISED]
         # Showing frame rate at the corner of the screen if enabled:
         if self.show_frame_rate:
             self.fps_text.set_text(str(int(self.clock.get_fps())))
-            # Position must be recalculated every frame because the text can change:
+            # Position must be set every frame because the text can change,
+            # and we need top left to be constant instead of centre:
             self.fps_text.get_rect().topleft = self.rect.topleft
             self.fps_text.draw()
 
     def quit(self):
-        self.save_player()
-        self.done = True
-
-    def save_player(self):
         # Saving player data:
         player = self.current_level.get_player()
         self.database_helper.update_player(player)
-
-    def is_done(self):
-        return self.done
+        self.done = True
 
     def get_current_level(self):
         return self.current_level

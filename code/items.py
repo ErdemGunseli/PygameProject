@@ -115,6 +115,7 @@ class Item(Tile):  # [TESTED & FINALISED]
             self.in_use = False
 
     def properties(self):
+        # Overriden by children:
         return "Item"
 
     def draw(self, draw_offset):

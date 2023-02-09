@@ -194,5 +194,7 @@ class DatabaseHelper:
         return Player(self.game, self.get_player_stats(), self.get_player_inventory())
 
     def update_player(self, player):
-        self.update_player_stats(player.get_stats())
-        self.update_player_inventory(player.get_inventory())
+        # They may quit the game before the player is created:
+        if player is not None:
+            self.update_player_stats(player.get_stats())
+            self.update_player_inventory(player.get_inventory())

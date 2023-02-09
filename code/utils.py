@@ -68,14 +68,6 @@ def get_segment_intersection(points1, points2):
 
     return x1 + t * (x2 - x1), y1 + t * (y2 - y1)
 
-
-# Returns the distance between two points:
-def get_distance_between(point1, point2):
-    x1, y1 = point1
-    x2, y2 = point2
-    return ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
-
-
 # Returns True or False. Chance to return True is passed as the argument:
 def decision(probability):
     # random.random() returns a random float between 0 and 1:
@@ -210,7 +202,6 @@ class Utils:
                                   NORMAL_HEALING: {EQUIP_CHANCE: 0.1, DROP_CHANCE: 0.6}}
                    },
     }
-
 
     def get_name(self, level_id):
         return self.LEVELS[level_id][self.NAME]

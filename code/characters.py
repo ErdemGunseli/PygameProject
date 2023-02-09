@@ -287,10 +287,6 @@ class Character(Tile):  # [TESTED & FINALISED]
         return self.inventory
 
     def move(self, speed):
-        # In this implementation, the character is moved on each axis separately.
-        # Then, collision is checked, and the character is moved to the appropriate side of the obstacle,
-        # which is determined using the character's direction of motion:
-
         # For high frame rates, the number of pixels the character moves per frame could be less than 1 pixel per frame.
         # For this reason, storing the distance that the character was unable to travel each frame,
         # and moving the character by that distance when it reaches 1:

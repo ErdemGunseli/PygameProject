@@ -13,7 +13,7 @@ class Tile(pygame.sprite.Sprite):  # [TESTED & FINALISED]
                  collider_ratio=(0.9, 0.9), image=None, protect_aspect_ratio=True):
         super().__init__()
 
-        # Attributes for game and level::
+        # Attributes for game and level:
         self.game = game
         self.level = game.get_current_level()
         self.tile_size = self.level.get_tile_size()

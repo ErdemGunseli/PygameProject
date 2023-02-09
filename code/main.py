@@ -24,7 +24,9 @@ class Game:  # [TESTED & FINALISED]
 
         # Getting the current resolution of the physical screen:
         screen_info = pygame.display.Info()
+
         self.resolution = [screen_info.current_w, screen_info.current_h]
+        # self.resolution = (800, 1000)
         self.screen = pygame.display.set_mode(self.resolution, pygame.FULLSCREEN, vsync=1)
         self.rect = self.screen.get_rect()
         pygame.display.set_caption(GAME_NAME)
@@ -108,17 +110,14 @@ class Game:  # [TESTED & FINALISED]
         return self.clock.get_fps()
 
     def get_current_frame_time(self):
-        frame_time = self.clock.get_fps()
+        frame_rate = self.clock.get_fps()
         # Avoiding division by zero:
-        if frame_time != 0:
-            return 1 / frame_time
+        if frame_rate != 0:
+            return 1 / frame_rate
         else:
             return 1
 
-    def get_frame_rate_cap(self):
-        return self.frame_rate
-
-    def set_frame_rate_cap(self, frame_rate):
+    def set_frame_rate(self, frame_rate):
         self.frame_rate = frame_rate
         # Updating the database:
         self.database_helper.update_setting(DatabaseHelper.FRAME_RATE_LIMIT, frame_rate)
@@ -181,7 +180,7 @@ class Game:  # [TESTED & FINALISED]
     def unit_to_pixel_point(self, values):
         # Conversion between pixels and arbitrary units:
         return int(values[0] * (self.resolution[0] / self.window_dimensions[0])), \
-               int(values[1] * (self.resolution[0] / self.window_dimensions[0]))
+            int(values[1] * (self.resolution[0] / self.window_dimensions[0]))
 
     def pixel_to_unit(self, value):
         # Conversion between pixels and arbitrary units:
@@ -367,7 +366,7 @@ class Game:  # [TESTED & FINALISED]
             # If the frame rate has been changed and the frame rate input is not empty, setting it to the attribute:
             if edt_txt_frame_rate.submitted() and not edt_txt_frame_rate.input_empty():
                 frame_rate = int(edt_txt_frame_rate.get_text())
-                self.set_frame_rate_cap(frame_rate)
+                self.set_frame_rate(frame_rate)
 
             # Toggling the frame rate counter if the show frame rate selector is clicked:
             elif sel_show_frame_rate.clicked():
@@ -659,7 +658,8 @@ class Game:  # [TESTED & FINALISED]
             self.current_level.update()
 
             # If escape or the pause button is clicked, returning to the previous menu:
-            if self.key_pressed(pygame.K_ESCAPE) or btn_pause.clicked(): return
+            if self.key_pressed(pygame.K_ESCAPE) or btn_pause.clicked():
+                return
             elif btn_information.clicked():
                 self.show_information()
             # If tab or the switch item button is clicked, incrementing the item selected by the player:
@@ -725,10 +725,12 @@ class Game:  # [TESTED & FINALISED]
             self.update()
 
             # Going back to the previous menu if escape or the quit button is clicked:
-            if self.key_pressed(pygame.K_ESCAPE) or btn_continue.clicked(): return
+            if self.key_pressed(pygame.K_ESCAPE) or btn_continue.clicked():
+                return
 
             # Ending program if the quit button is clicked:
-            elif btn_quit.clicked(): self.done = True
+            elif btn_quit.clicked():
+                self.done = True
 
             for view in views: view.update()
             pygame.display.flip()
@@ -746,20 +748,22 @@ class Game:  # [TESTED & FINALISED]
         example_texts.append(txt_test)
 
         edt_txt_1 = TextInput(self, hint="Type Something Here!", font_size=0.05,
-                              corner_radius=1, frame_thickness=0.004,
-                              max_length=15, clear_on_submit=True,
-                              below=txt_test, margin=0.05)
+                              corner_radius=0.05, frame_thickness=0.01,
+                              max_length=20, clear_on_submit=True,
+                              below=txt_test, margin=0.05, padding=0.03,
+                              frame_colour=SMOKE, text_colour=BLUE_GREY, text_focus_colour=BLACK)
         views.append(edt_txt_1)
         example_texts.append(edt_txt_1)
 
-        img_test = Image(self, pygame.image.load(STEALTH_ICON).convert_alpha(), to_left_of=edt_txt_1,
-                         frame_condition=View.ALWAYS, margin=0)
+        img_test = Image(self, pygame.image.load(HEALTH_ICON).convert_alpha(), to_left_of=edt_txt_1,
+                         frame_condition=View.ALWAYS, margin=0, frame_thickness=0, frame_colour=RED)
         views.append(img_test)
 
         sl_text_size = Slider(self, below=edt_txt_1, margin=0.015)
         views.append(sl_text_size)
 
-        pr_test = ProgressBar(self, below=sl_text_size, margin=0.015)
+        pr_test = ProgressBar(self, below=sl_text_size, margin=0.015, size=(0.3, 0.03), frame_colour=SILVER,
+                              progress_colour=PURPLE, frame_thickness=0, corner_radius=0.01, padding=0.01)
         views.append(pr_test)
 
         sl_padding = Slider(self, below=pr_test, margin=0.015)
@@ -768,8 +772,16 @@ class Game:  # [TESTED & FINALISED]
         sl_margin = Slider(self, below=sl_padding, margin=0.015)
         views.append(sl_margin)
 
-        txt_paragraph = Text(self, text="Hi\nThere\nHow\nAre\nYou\nToday?", font_size=0.02,
-                             to_right_of=edt_txt_1)
+        sl_useless = Slider(self, to_right_of=sl_margin, margin=0.015, size=(0.2, 0.02),
+                            bar_colour=BLUE_GREY, handle_colour=PLATINUM, handle_radius=0.01)
+        views.append(sl_useless)
+
+        txt_paragraph = Text(self, text="Lorem ipsum dolor sit amet.\nCur hanc translationem vexas?",
+                             font_size=0.03,
+                             to_right_of=edt_txt_1, margin=0,
+                             corner_radius=0.02, frame_thickness=0, text_colour=WHITE, frame_colour=SMOKE,
+                             line_separation_ratio=1.3)
+
         views.append(txt_paragraph)
         example_texts.append(txt_paragraph)
 
@@ -834,7 +846,33 @@ class Game:  # [TESTED & FINALISED]
                     text.set_underline(not text.get_underline())
                 btn_underline.set_frame_condition([View.HOVER, View.ALWAYS][example_texts[0].get_underline()])
 
-            elif btn_back.clicked(): return
+            elif btn_back.clicked():
+                self.test_2()
+
+            for view in views: view.update()
+            pygame.display.flip()
+            self.clock.tick(self.frame_rate)
+
+    def test_2(self):
+        views = []
+
+        txt_title = TextLine(self, text="Title Text", font_size=0.1, below=self.rect.midtop, margin=0.03,
+                             underline=True)
+        txt_paragraph = Text(self, text="This\nis\nan\nexample\nparagraph.", below=txt_title, margin=0.05,
+                             font_size=0.05)
+        edt_txt_input = TextInput(self, hint="Input", to_right_of=txt_paragraph, margin=0.03, font_size=0.05)
+        btn_continue = Button(self, text="Continue", font_size=0.05, to_right_of=edt_txt_input, margin=0.05)
+
+        views.append(txt_title)
+        views.append(txt_paragraph)
+        views.append(edt_txt_input)
+        views.append(btn_continue)
+
+        while not self.done:
+            self.screen.fill(WHITE)
+            self.update()
+
+            if self.key_pressed(pygame.K_ESCAPE): return
 
             for view in views: view.update()
             pygame.display.flip()

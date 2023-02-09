@@ -240,8 +240,13 @@ class Weapon(Item):  # [TESTED & FINALISED]
 
         for tile in vulnerable_tiles:
             if self.collider.colliderect(tile.get_collider()):
+                output_damage = self.damage * self.game.get_current_frame_time()
+
+                # If the owner is a player, we need to include its damage multiplier:
+                if isinstance(self.owner, Player): output_damage *= self.owner.get_stats()[Player.DAMAGE_MULTIPLIER]
+
                 # Applying damage to vulnerable tile:
-                tile.receive_damage(self.damage * self.game.get_current_frame_time())
+                tile.receive_damage(output_damage)
 
     def update(self):
         super().update()

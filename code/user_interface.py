@@ -287,7 +287,6 @@ class TextLine(View):
                          frame_condition=frame_condition, frame_thickness=frame_thickness, corner_radius=corner_radius,
                          frame_colour=frame_colour, frame_hover_colour=frame_hover_colour)
 
-
     def calculate_position(self, exclude=None):
         super().calculate_position(exclude=exclude)
         # Centering the text surface after the frame has been moved:
@@ -425,14 +424,16 @@ class Image(View):
         icon_height = current_icon_size_px[1]
 
         if (icon_width / max_icon_size_px[0]) > (icon_height / max_icon_size_px[1]):
-            # If width greater than height, adjusting width to fit max width,
+
+            # If ratio of widths greater than heights, adjusting width to fit max width,
             # then multiplying height with the scale factor:
+
             scale_factor = max_icon_size_px[0] / icon_width
             icon_width = max_icon_size_px[0]
             icon_height *= scale_factor
         else:
-            # If width greater than height, adjusting width to fit max width,
-            # then multiplying height with the scale factor:
+            # If ratio if heights greater than widths, adjusting height to fit max height,
+            # then multiplying width with the scale factor:
             scale_factor = max_icon_size_px[1] / icon_height
             icon_height = max_icon_size_px[1]
             icon_width *= scale_factor
@@ -572,7 +573,7 @@ class TextInput(TextLine):
                  frame_condition=View.ALWAYS, frame_thickness=0.005, corner_radius=0.01,
                  frame_colour=BLACK, text_colour=BLACK, frame_hover_colour=SMOKE, text_hover_colour=SMOKE,
                  frame_focus_colour=BLUE_GREY, text_focus_colour=BLUE_GREY):
-        # The input type that is allowed:
+        # The input type thaunt is allowed:
         self.input_type = input_type
 
         # The hint is displayed if the element is empty:
@@ -587,7 +588,7 @@ class TextInput(TextLine):
         # The maximum length of text input:
         self.max_length = max_length
 
-        # Whether to set input as hint and clear input field when text is submitted.
+         # Whether to set input as hint and clear input field when text is submitted.
         # This prevents the need to delete what has already been written should the user want to change it.
         self.clear_on_submit = clear_on_submit
 
@@ -1056,7 +1057,7 @@ class ProgressBar(View):
         self.progress = start_progress
         self.progress_colour = progress_colour
 
-        # Following will be set with size:
+# Following will be set with size:
         # We need to keep track of the max size allowed since the size of the bar can change:
         self.max_size = None
         # Tentative value (0,0), corrected afterwards:
@@ -1078,14 +1079,15 @@ class ProgressBar(View):
                          frame_colour=frame_colour, frame_hover_colour=frame_hover_colour)
 
     def set_progress(self, progress):
-        self.progress = progress
-        # Setting the correct size for this progress:
-        self.update_bar_size()
+        if 0 <= progress <= 1:
+            self.progress = progress
+            # Setting the correct size for this progress:
+            self.update_bar_size()
 
-        # Setting the correct progress for the text:
-        self.progress_text.set_text(percentage_format(progress))
+            # Setting the correct progress for the text:
+            self.progress_text.set_text(percentage_format(progress))
 
-        self.align_rectangles()
+            self.align_rectangles()
 
     def update_bar_size(self):
         if self.orientation == View.HORIZONTAL:

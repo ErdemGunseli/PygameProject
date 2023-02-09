@@ -386,9 +386,10 @@ class Level:  # [TESTED & FINALISED]
         # Centering the camera on the player and calculating the points representing the
         # 4 line segments that make up the display (used for many features):
         self.calculate_display_lines()
-        self.draw_map()
+
         # Calculating which tiles are in the frame and need to be processed further:
         self.calculate_all_tiles_in_frame()
+        self.draw_map()
         # Updating tiles that need to be updated:
         for tile in self.dynamic_tiles_in_frame: tile.update()
 

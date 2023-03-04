@@ -1,6 +1,5 @@
 import pygame.image
 from tile import Tile
-from assets import *
 from user_interface import *
 
 
@@ -61,7 +60,6 @@ class Character(Tile):  # [TESTED & FINALISED]
         self.damaged_sound = pygame.mixer.Sound(WEAPON_USE)
         self.damaged_sound_start_time = 0
         self.damaged_sound_can_be_played = True
-
 
         # The item that is held by the character:
         # The player cannot remove all items from their inventory,
@@ -209,6 +207,9 @@ class Character(Tile):  # [TESTED & FINALISED]
             self.damaged_sound_can_be_played = True
 
     def handle_collision(self, axis):
+        # A flag that can be used to test if a collision has occurred:
+        collision_detected = False
+
         # Retrieving the collision objects:
         obstacle_sprites = self.level.get_obstacle_tiles_in_frame().copy()
 
@@ -221,6 +222,7 @@ class Character(Tile):  # [TESTED & FINALISED]
                 obstacle_collider = obstacle.get_collider()
                 # Checking if the obstacle has collided with the character:
                 if obstacle_collider.colliderect(self.collider):
+                    collision_detected = True
                     # Using the character's direction to handle collision:
                     if self.direction.x > 0:
                         # The character is moving right, move the character to the left of the obstacle:
@@ -234,6 +236,7 @@ class Character(Tile):  # [TESTED & FINALISED]
                 obstacle_collider = obstacle.get_collider()
                 # Checking if the obstacle has collided with the character:
                 if obstacle_collider.colliderect(self.collider):
+                    collision_detected = True
                     # Using the character's direction to handle collision:
                     if self.direction.y > 0:
                         # The character is moving down, move the character above of the obstacle:
@@ -241,6 +244,8 @@ class Character(Tile):  # [TESTED & FINALISED]
                     else:
                         # The character is moving up, move the character below the obstacle:
                         self.collider.top = obstacle_collider.bottom
+
+        return collision_detected
 
     def add_health(self, health_value):
         # Increases the character's health by the specified amount, to not exceed the maximum health:
@@ -428,6 +433,7 @@ class Player(Character):  # [TESTED & FINALISED]
         self.handle_input()
         self.handle_item_collision()
         self.move(self.BASE_SPEED * self.stats[self.SPEED_MULTIPLIER])
+        print(f"Position: {self.rect.center},  Direction: {self.direction}")
 
 
 class Enemy(Character):  # [TESTED & FINALISED]
@@ -449,7 +455,7 @@ class Enemy(Character):  # [TESTED & FINALISED]
         self.tile_size = self.level.get_tile_size()
 
         # Multiplier for the minimum distance for the enemy to notice the player:
-        self.alert_multiplier = (1 / self.player.get_stats()[Player.STEALTH_MULTIPLIER])
+        self.alert_multiplier = self.player.get_stats()[Player.STEALTH_MULTIPLIER]
 
         # The attack range should be just where the item held can reach the player:
         self.attack_range = max(self.item_held.get_collider().size)

@@ -85,6 +85,8 @@ class View(ABC, pygame.sprite.Sprite):
         self.set_size(size)
 
     def set_size(self, size):
+        # Validating that none of the dimensions is 0:
+        if 0 in size: return
         # Setting accurate size including padding, whilst protecting the position of the centre:
         centre = self.rect.center
         self.rect.size = [dimension + 2 * self.padding for dimension in self.game.unit_to_pixel_point(size)]
@@ -420,6 +422,8 @@ class Image(View):
         # Updating the icon size whilst maintaining its aspect ratio and obeying the maximum size:
         current_icon_size_px = self.icon.get_size()
         max_icon_size_px = self.game.unit_to_pixel_point(self.max_icon_size)
+        if 0 in self.max_icon_size: return
+
         icon_width = current_icon_size_px[0]
         icon_height = current_icon_size_px[1]
 

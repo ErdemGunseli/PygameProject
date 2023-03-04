@@ -177,7 +177,7 @@ class Weapon(Item):  # [TESTED & FINALISED]
     LEFT = "left.png"
     RIGHT = "right.png"
 
-    def __init__(self, game, name, damage,  use_duration, image_path, size, owner=None, position=(0, 0), ):
+    def __init__(self, game, name, damage,  use_duration, image_path, size, owner=None, position=(0, 0)):
         super().__init__(game, name, use_duration, image_path, size,
                          use_sound_path=WEAPON_USE, owner=owner, position=position)
 

@@ -1,7 +1,7 @@
 # Contains all text strings used within the game: [DONE]
 
 # ~~ Game ~~ #
-GAME_NAME = "THE GAME"
+GAME_NAME = "Forest Knight"
 PLACEHOLDER = "_"
 RESOLUTION_FORMAT = "{} x {}"
 
@@ -64,15 +64,12 @@ NEXT_LEVEL = "Next Level"
 RESTART_LEVEL = "Restart Level"
 NEXT_LEVEL_ERROR = "Kill All Enemies First"
 
-
-
 # ~!~ Character Names ~!~ #
 PLAYER = "Player"
 DEMON = "Demon"
 SKELETON = "Skeleton"
 WARRIOR = "Warrior"
 ENEMY_NAMES = [DEMON, SKELETON, WARRIOR]
-
 
 # ~!~ Items ~!~ #
 
@@ -97,7 +94,6 @@ LESSER_HEALING = "Lesser Healing Potion"
 NORMAL_HEALING = "Normal Healing Potion"
 GREATER_HEALING = "Greater Healing Potion"
 SUPER_HEALING = "Super Healing Potion"
-
 
 ITEM_NAMES = [KNIGHT_SWORD, LANCE, BATTLE_AXE, RAPIER, TRIDENT, LONGSWORD, CLUB, FORK, HAMMER, KATANA, SPEAR,
               NUN_CHUCKS, STICK, BONE, LESSER_HEALING, NORMAL_HEALING, GREATER_HEALING, SUPER_HEALING]

@@ -26,7 +26,7 @@ class Game:  # [TESTED & FINALISED]
         screen_info = pygame.display.Info()
 
         self.resolution = [screen_info.current_w, screen_info.current_h]
-        # self.resolution = (800, 1000)
+        # self.resolution = (1000, 1000)
         self.screen = pygame.display.set_mode(self.resolution, pygame.FULLSCREEN, vsync=1)
         self.rect = self.screen.get_rect()
         pygame.display.set_caption(GAME_NAME)
@@ -34,9 +34,9 @@ class Game:  # [TESTED & FINALISED]
 
         # Calculating window dimensions - this is an arbitrary unit to make everything fully resolution independent:
         if self.resolution[0] >= self.resolution[1]:
-            self.window_dimensions = [1 + self.resolution[1] / self.resolution[0], 1]
+            self.window_dimensions = [self.resolution[0] / self.resolution[1], 1]
         else:
-            self.window_dimensions = [1, 1 + self.resolution[1] / self.resolution[0]]
+            self.window_dimensions = [1, self.resolution[1] / self.resolution[0]]
 
         # The font of the game:
         self.font = FONT

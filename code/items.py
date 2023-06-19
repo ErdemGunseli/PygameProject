@@ -42,6 +42,9 @@ class Item(Tile):  # [TESTED & FINALISED]
         self.set_owner(owner)
 
     def set_owner(self, owner):
+        # Cannot be in use when owner changes:
+        self.in_use = False
+
         if owner is None:
 
             # If item had a previous owner, placing the item at the feet of the previous owner:
@@ -232,6 +235,10 @@ class Weapon(Item):  # [TESTED & FINALISED]
         return self.damage
 
     def check_hit(self):
+
+        # Can only deal damage if owned by a character:
+        if self.owner is None: return
+
         # Obtaining vulnerable tiles in frame from the level:
         vulnerable_tiles = self.game.get_current_level().get_vulnerable_tiles_in_frame().copy()
 
@@ -240,7 +247,7 @@ class Weapon(Item):  # [TESTED & FINALISED]
 
         for tile in vulnerable_tiles:
             if self.collider.colliderect(tile.get_collider()):
-                output_damage = self.damage * self.game.get_current_frame_time()
+                output_damage = self.damage * self.game.get_current_frame_time() * self.owner.get_stats()[Character.DAMAGE_MULTIPLIER]
 
                 # If the owner is a player, we need to include its damage multiplier:
                 if isinstance(self.owner, Player): output_damage *= self.owner.get_stats()[Player.DAMAGE_MULTIPLIER]

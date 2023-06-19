@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.0" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="256" tileheight="256" infinite="0" nextlayerid="23" nextobjectid="204">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="256" tileheight="256" infinite="0" nextlayerid="23" nextobjectid="204">
  <tileset firstgid="1" source="../../tilesets/summer_rpg/summer_rpg_tiles.tsx"/>
  <tileset firstgid="68" source="../../tilesets/summer_rpg/summer_rpg_objects.tsx"/>
  <tileset firstgid="107" source="../../tilesets/special/special_tiles.tsx"/>
@@ -259,7 +259,7 @@
    <object id="201" gid="91" x="7497.5" y="2274" width="301" height="508"/>
    <object id="202" gid="91" x="7505.5" y="7002" width="357" height="532"/>
   </objectgroup>
-  <objectgroup id="15" name="Trees" opacity="0.73">
+  <objectgroup id="15" name="Trees">
    <object id="203" gid="98" x="5686.5" y="2056" width="1075" height="1376"/>
   </objectgroup>
  </group>
@@ -438,7 +438,7 @@
   </layer>
  </group>
  <group id="16" name="Potions">
-  <layer id="18" name="Greater Healing Potion" width="30" height="30" opacity="0.48">
+  <layer id="18" name="Greater Healing Potion" width="30" height="30">
    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -472,7 +472,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
   </layer>
-  <layer id="17" name="Super Healing Potion" width="30" height="30" opacity="0.55">
+  <layer id="17" name="Super Healing Potion" width="30" height="30">
    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -511,7 +511,7 @@
   <objectgroup id="4" name="Quest Board">
    <object id="1" gid="78" x="704.993" y="1053.06" width="593.939" height="565.788"/>
   </objectgroup>
-  <layer id="5" name="Barriers" width="30" height="30">
+  <layer id="5" name="Barriers" width="30" height="30" opacity="0.45">
    <data encoding="csv">
 107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,107,
 107,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,107,

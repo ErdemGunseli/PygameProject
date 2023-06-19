@@ -44,6 +44,7 @@ class Level:  # [TESTED & FINALISED]
         # Setting up display:
         self.display = pygame.display.get_surface()
         self.display_rect = self.display.get_rect()
+
         # Calculating the pixel size of each tile according to how many should fit on-screen:
         min_tile_count = Utils().get_min_tile_count(level_id)
         self.tile_size = min(self.display_rect.width, self.display_rect.height) // min_tile_count

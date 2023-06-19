@@ -68,6 +68,7 @@ def get_segment_intersection(points1, points2):
 
     return x1 + t * (x2 - x1), y1 + t * (y2 - y1)
 
+
 # Returns True or False. Chance to return True is passed as the argument:
 def decision(probability):
     # random.random() returns a random float between 0 and 1:
@@ -115,33 +116,33 @@ class Utils:
     ITEMS = {
         # Weapons:
         KNIGHT_SWORD: {PATH: path.format(weapon_folder, "sword"),
-                       LENGTH: 0.6, USE_DURATION: 750, DAMAGE: 300, TYPE: WEAPON},
+                       LENGTH: 0.6, USE_DURATION: 750, DAMAGE: 14, TYPE: WEAPON},
         LANCE: {PATH: path.format(weapon_folder, "lance"),
-                LENGTH: 1.2, USE_DURATION: 1000, DAMAGE: 300, TYPE: WEAPON},
+                LENGTH: 1.2, USE_DURATION: 1000, DAMAGE: 16, TYPE: WEAPON},
         BATTLE_AXE: {PATH: path.format(weapon_folder, "axe"),
-                     LENGTH: 0.7, USE_DURATION: 1200, DAMAGE: 320, TYPE: WEAPON},
+                     LENGTH: 0.7, USE_DURATION: 1200, DAMAGE: 16, TYPE: WEAPON},
         RAPIER: {PATH: path.format(weapon_folder, "rapier"),
-                 LENGTH: 0.7, USE_DURATION: 300, DAMAGE: 220, TYPE: WEAPON},
+                 LENGTH: 0.7, USE_DURATION: 300, DAMAGE: 11, TYPE: WEAPON},
         TRIDENT: {PATH: path.format(weapon_folder, "trident"),
-                  LENGTH: 0.6, USE_DURATION: 850, DAMAGE: 600, TYPE: WEAPON},
+                  LENGTH: 0.6, USE_DURATION: 850, DAMAGE: 30, TYPE: WEAPON},
         LONGSWORD: {PATH: path.format(weapon_folder, "longsword"),
-                    LENGTH: 0.8, USE_DURATION: 1100, DAMAGE: 400, TYPE: WEAPON},
+                    LENGTH: 0.8, USE_DURATION: 1100, DAMAGE: 21, TYPE: WEAPON},
         CLUB: {PATH: path.format(weapon_folder, "club"),
-               LENGTH: 0.7, USE_DURATION: 500, DAMAGE: 150, TYPE: WEAPON},
+               LENGTH: 0.7, USE_DURATION: 500, DAMAGE: 7, TYPE: WEAPON},
         FORK: {PATH: path.format(weapon_folder, "fork"),
-               LENGTH: 0.7, USE_DURATION: 950, DAMAGE: 190, TYPE: WEAPON},
+               LENGTH: 0.7, USE_DURATION: 950, DAMAGE: 8.5, TYPE: WEAPON},
         HAMMER: {PATH: path.format(weapon_folder, "hammer"),
-                 LENGTH: 0.7, USE_DURATION: 1150, DAMAGE: 220, TYPE: WEAPON},
+                 LENGTH: 0.7, USE_DURATION: 1150, DAMAGE: 17, TYPE: WEAPON},
         KATANA: {PATH: path.format(weapon_folder, "katana"),
-                 LENGTH: 0.7, USE_DURATION: 350, DAMAGE: 500, TYPE: WEAPON},
+                 LENGTH: 0.7, USE_DURATION: 350, DAMAGE: 25, TYPE: WEAPON},
         SPEAR: {PATH: path.format(weapon_folder, "spear"),
-                LENGTH: 1, USE_DURATION: 900, DAMAGE: 290, TYPE: WEAPON},
+                LENGTH: 1, USE_DURATION: 900, DAMAGE: 14.5, TYPE: WEAPON},
         NUN_CHUCKS: {PATH: path.format(weapon_folder, "nun_chucks"),
-                     LENGTH: 1, USE_DURATION: 450, DAMAGE: 450, TYPE: WEAPON},
+                     LENGTH: 1, USE_DURATION: 450, DAMAGE: 22.5, TYPE: WEAPON},
         STICK: {PATH: path.format(weapon_folder, "stick"),
-                LENGTH: 1, USE_DURATION: 400, DAMAGE: 180, TYPE: WEAPON},
+                LENGTH: 1, USE_DURATION: 400, DAMAGE: 9, TYPE: WEAPON},
         BONE: {PATH: path.format(weapon_folder, "bone"),
-               LENGTH: 0.5, USE_DURATION: 600, DAMAGE: 150, TYPE: WEAPON},
+               LENGTH: 0.5, USE_DURATION: 600, DAMAGE: 13.5, TYPE: WEAPON},
 
         # Potions:
         LESSER_HEALING: {PATH: path.format(potion_folder, "lesser_healing"), USE_DURATION: 200,
@@ -155,7 +156,7 @@ class Utils:
     }
 
     HEALTH = 12
-    SPEED = 13
+    SPEED_MULTIPLIER = 13
     ALERT_RADIUS = 14
     WEAPON_DROPS = 15
     POTION_DROPS = 16
@@ -164,10 +165,11 @@ class Utils:
     # How long it takes for enemies to recover after using an item:
     # For players, there is no such game mechanic.
     RECOVERY_DURATION = 19
+    DAMAGE_MULTIPLIER = 20
 
     ENEMIES = {
-        DEMON: {HEALTH: 250, SPEED: 4, ALERT_RADIUS: 10, RECOVERY_DURATION: 850,
-                PATH: "../assets/images/characters/enemies/demon",
+        DEMON: {HEALTH: 250, SPEED_MULTIPLIER: 0.5, ALERT_RADIUS: 10, RECOVERY_DURATION: 3850,
+                PATH: "../assets/images/characters/enemies/demon", DAMAGE_MULTIPLIER: 2,
                 WEAPON_DROPS: {BATTLE_AXE: {EQUIP_CHANCE: 0.3, DROP_CHANCE: 0.5},
                                TRIDENT: {EQUIP_CHANCE: 0.1, DROP_CHANCE: 0},
                                LONGSWORD: {EQUIP_CHANCE: 0.6, DROP_CHANCE: 0.8}},
@@ -177,8 +179,8 @@ class Utils:
                     SUPER_HEALING: {EQUIP_CHANCE: 0.4, DROP_CHANCE: 0.9}}
                 },
 
-        WARRIOR: {HEALTH: 180, SPEED: 6, ALERT_RADIUS: 15, RECOVERY_DURATION: 700,
-                  PATH: "../assets/images/characters/enemies/warrior",
+        WARRIOR: {HEALTH: 170, SPEED_MULTIPLIER: 1.1, ALERT_RADIUS: 15, RECOVERY_DURATION: 900,
+                  PATH: "../assets/images/characters/enemies/warrior", DAMAGE_MULTIPLIER: 0.8,
                   WEAPON_DROPS: {LANCE: {EQUIP_CHANCE: 0.2, DROP_CHANCE: 0.8},
                                  KATANA: {EQUIP_CHANCE: 0.3, DROP_CHANCE: 0.5},
                                  SPEAR: {EQUIP_CHANCE: 0.2, DROP_CHANCE: 0.7},
@@ -189,14 +191,15 @@ class Utils:
                                  GREATER_HEALING: {EQUIP_CHANCE: 0.4, DROP_CHANCE: 0.9}}
                   },
 
-        SKELETON: {HEALTH: 200, SPEED: 4, ALERT_RADIUS: 7, RECOVERY_DURATION: 1500,
-                   PATH: "../assets/images/characters/enemies/skeleton",
+        SKELETON: {HEALTH: 90, SPEED_MULTIPLIER: 0.9, ALERT_RADIUS: 7, RECOVERY_DURATION: 1500,
+                   PATH: "../assets/images/characters/enemies/skeleton", DAMAGE_MULTIPLIER: 0.75,
                    WEAPON_DROPS: {CLUB: {EQUIP_CHANCE: 0.2, DROP_CHANCE: 0.4},
                                   FORK: {EQUIP_CHANCE: 0.1, DROP_CHANCE: 0.4},
                                   HAMMER: {EQUIP_CHANCE: 0.1, DROP_CHANCE: 0.5},
                                   STICK: {EQUIP_CHANCE: 0.2, DROP_CHANCE: 0.7},
                                   RAPIER: {EQUIP_CHANCE: 0.1, DROP_CHANCE: 0.3},
-                                  BONE: {EQUIP_CHANCE: 0.3, DROP_CHANCE: 0.8}},
+                                  BONE: {EQUIP_CHANCE: 0.3, DROP_CHANCE: 0.8},
+                                  },
 
                    POTION_DROPS: {LESSER_HEALING: {EQUIP_CHANCE: 0.9, DROP_CHANCE: 0.8},
                                   NORMAL_HEALING: {EQUIP_CHANCE: 0.1, DROP_CHANCE: 0.6}}
@@ -270,9 +273,10 @@ class Utils:
         from characters import Enemy
 
         health = self.ENEMIES[enemy_name][self.HEALTH]
-        speed = self.ENEMIES[enemy_name][self.SPEED]
+        speed_multiplier = self.ENEMIES[enemy_name][self.SPEED_MULTIPLIER]
         alert_radius = self.ENEMIES[enemy_name][self.ALERT_RADIUS]
         recovery_duration = self.ENEMIES[enemy_name][self.RECOVERY_DURATION]
+        damage_multiplier = self.ENEMIES[enemy_name][self.DAMAGE_MULTIPLIER]
 
         # All enemies always equip a weapon and potion:
         # They have a chance to drop each when they die (depending on what they are carrying):
@@ -281,7 +285,8 @@ class Utils:
 
         path = self.ENEMIES[enemy_name][self.PATH]
 
-        return Enemy(game, enemy_name, {Enemy.FULL_HEALTH: health, Enemy.CURRENT_HEALTH: health, Enemy.SPEED: speed,
-                                        Enemy.ALERT_RADIUS: alert_radius, Enemy.RECOVERY_DURATION: recovery_duration,
-                                        Enemy.INVULNERABILITY_DURATION: 100},
+        return Enemy(game, enemy_name, {Enemy.FULL_HEALTH: health, Enemy.CURRENT_HEALTH: health,
+                                        Enemy.SPEED_MULTIPLIER: speed_multiplier, Enemy.ALERT_RADIUS: alert_radius,
+                                        Enemy.DAMAGE_MULTIPLIER: damage_multiplier,
+                                        Enemy.RECOVERY_DURATION: recovery_duration},
                      {weapon: 1, potion: 1}, path)

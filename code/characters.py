@@ -4,11 +4,14 @@ from user_interface import *
 
 
 class Character(Tile):  # [TESTED & FINALISED]
+    # Default speed of game characters in tiles per second:
+    BASE_SPEED = 5
+
     # Constants for Stat Types:
     FULL_HEALTH = 0
     CURRENT_HEALTH = 1
-
-    INVULNERABILITY_DURATION = 2
+    DAMAGE_MULTIPLIER = 2
+    SPEED_MULTIPLIER = 3
 
     # Animation folder names:
     UP_MOVE = "up_move"
@@ -26,8 +29,6 @@ class Character(Tile):  # [TESTED & FINALISED]
     LEFT_USE = "left_use"
     RIGHT_USE = "right_use"
 
-    # Animation frame durations in ms:
-    ANIMATION_FRAME_TIME = 150
     # Cooldown for damage sound in ms to prevent it from becoming too annoying:
     DAMAGED_SOUND_COOLDOWN = 2000
 
@@ -47,14 +48,6 @@ class Character(Tile):  # [TESTED & FINALISED]
 
         # For each item in the inventory, setting the owner as the character:
         for item in self.inventory: item.set_owner(self)
-
-        # Whether the player is currently invulnerable
-        # (the player is made invulnerable for a short period of time after taking damage):
-
-        # Characters are made invulnerable for a short time after taking damage:
-        # Whether the character is invulnerable:
-        self.invulnerable = True
-        self.invulnerability_start_time = 0
 
         # The sound to be played when the character is damaged:
         self.damaged_sound = pygame.mixer.Sound(WEAPON_USE)
@@ -80,6 +73,8 @@ class Character(Tile):  # [TESTED & FINALISED]
         self.animation_increment_time = 0
         self.current_animation_frame_index = 0
         self.import_animations()
+        # How long each animation frame should take:
+        self.animation_frame_time = 150 / self.stats[self.SPEED_MULTIPLIER]
 
     def import_animations(self):
         # A dictionary of animation folder names and lists of images in the folders:
@@ -128,7 +123,7 @@ class Character(Tile):  # [TESTED & FINALISED]
 
         # If the current time is greater than the time the animation frame was last updated,
         # and the duration each animation frame should last, updating the animation frame:
-        if current_time >= self.animation_increment_time + self.ANIMATION_FRAME_TIME:
+        if current_time >= self.animation_increment_time + self.animation_frame_time:
             self.animation_increment_time = current_time
             self.current_animation_frame_index += 1
 
@@ -198,10 +193,6 @@ class Character(Tile):  # [TESTED & FINALISED]
 
         current_time = pygame.time.get_ticks()
 
-        # Characters have invulnerability for a short time after taking damage:
-        if current_time - self.invulnerability_start_time >= self.stats[self.INVULNERABILITY_DURATION]:
-            self.invulnerable = False
-
         # Character can only play damage sound after a cooldown:
         if current_time - self.damaged_sound_start_time >= self.DAMAGED_SOUND_COOLDOWN:
             self.damaged_sound_can_be_played = True
@@ -254,12 +245,6 @@ class Character(Tile):  # [TESTED & FINALISED]
             self.stats[self.CURRENT_HEALTH] = self.stats[self.FULL_HEALTH]
 
     def receive_damage(self, damage_value):
-        # Cannot receive damage if currently invulnerable:
-        if self.invulnerable: return
-
-        # Character becomes invulnerable for a short time after receiving damage:
-        self.invulnerable = True
-        self.invulnerability_start_time = pygame.time.get_ticks()
 
         # Playing damage sound:
         if self.damaged_sound_can_be_played:
@@ -328,17 +313,11 @@ class Character(Tile):  # [TESTED & FINALISED]
 
 
 class Player(Character):  # [TESTED & FINALISED]
-    # Additional Stats for Player:
-    CURRENT_LEVEL_ID = 3
-    SPEED_MULTIPLIER = 4
-    DAMAGE_MULTIPLIER = 5
-    STEALTH_MULTIPLIER = 6
+    STEALTH_MULTIPLIER = 4
+    CURRENT_LEVEL_ID = 5
 
     # Where the animation files are located:
     ANIMATION_PATH = "../assets/images/characters/player/knight"
-
-    # Default speed of the player in tiles per second:
-    BASE_SPEED = 5
 
     def __init__(self, game, stats, inventory, position=(0, 0)):
         super().__init__(game, stats, inventory, self.ANIMATION_PATH, position=position)
@@ -433,16 +412,14 @@ class Player(Character):  # [TESTED & FINALISED]
         self.handle_input()
         self.handle_item_collision()
         self.move(self.BASE_SPEED * self.stats[self.SPEED_MULTIPLIER])
-        print(f"Position: {self.rect.center},  Direction: {self.direction}")
 
 
 class Enemy(Character):  # [TESTED & FINALISED]
     # Additional Stats for Enemy:
     # Enemies don't have speed multipliers since their stats are constant:
     # The following are labels for the Stats dictionary, not the actual values:
-    SPEED = 7
-    ALERT_RADIUS = 8
-    RECOVERY_DURATION = 9
+    ALERT_RADIUS = 7
+    RECOVERY_DURATION = 8
 
     def __init__(self, game, name, stats, inventory, animation_path, position=(0, 0)):
         super().__init__(game, stats, inventory, animation_path, position=position)
@@ -556,4 +533,5 @@ class Enemy(Character):  # [TESTED & FINALISED]
         super().update()
         self.ai()
         self.update_views()
-        self.move(self.stats[self.SPEED])
+        self.move(self.BASE_SPEED * self.stats[self.SPEED_MULTIPLIER])
+

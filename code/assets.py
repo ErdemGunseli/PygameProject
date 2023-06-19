@@ -6,7 +6,6 @@ FONT = "../assets/fonts/metropolis_light"
 
 # ~!~ Images ~!~ #
 image_path = "../assets/images"
-GAME_LOGO = path.format(image_path, "logo.png")
 
 # ~~ Icons ~~ #
 icon_path = "../assets/images/icons"

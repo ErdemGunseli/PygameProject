@@ -51,8 +51,8 @@ class DatabaseHelper:
                             (Player.FULL_HEALTH, 0),
                             (Player.SPEED_MULTIPLIER, 1),
                             (Player.DAMAGE_MULTIPLIER, 1),
-                            (Player.STEALTH_MULTIPLIER, 1),
-                            (Player.INVULNERABILITY_DURATION, 350)])
+                            (Player.STEALTH_MULTIPLIER, 1)
+                            ])
 
         # Player inventory table:
         cursor.execute("""CREATE TABLE IF NOT EXISTS INVENTORY(
@@ -76,12 +76,11 @@ class DatabaseHelper:
                             # (NUN_CHUCKS, 1),
                             # (STICK, 1),
                             # (BONE, 1),
-                            (LESSER_HEALING, 3),
+                            # (LESSER_HEALING, 3),
                             # (NORMAL_HEALING, 3),
                             # (GREATER_HEALING, 3),
                             # (SUPER_HEALING, 3)
                             ])
-
         connection.commit()
         connection.close()
 
@@ -90,7 +89,6 @@ class DatabaseHelper:
         cursor = connection.cursor()
 
         # Deleting all tables one by one:
-        #        cursor.execute("DROP TABLE IF EXISTS SETTINGS")
         cursor.execute("DROP TABLE IF EXISTS SETTINGS")
         cursor.execute("DROP TABLE IF EXISTS PLAYER_STATS")
         cursor.execute("DROP TABLE IF EXISTS INVENTORY")

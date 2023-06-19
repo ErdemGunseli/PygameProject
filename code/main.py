@@ -26,7 +26,7 @@ class Game:  # [TESTED & FINALISED]
         screen_info = pygame.display.Info()
 
         self.resolution = [screen_info.current_w, screen_info.current_h]
-        # self.resolution = (1000, 1000)
+        # self.resolution = (1280, 720)
         self.screen = pygame.display.set_mode(self.resolution, pygame.FULLSCREEN, vsync=1)
         self.rect = self.screen.get_rect()
         pygame.display.set_caption(GAME_NAME)
@@ -505,7 +505,6 @@ class Game:  # [TESTED & FINALISED]
         # Warning Text:
         txt_warning = TextLine(self, ENTER_CHARACTER_NAME,
                                visible=False,
-                               position=(0, 0),
                                font_size=0.04,
                                below=txt_stats,
                                margin=0,

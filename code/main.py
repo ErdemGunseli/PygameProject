@@ -242,7 +242,8 @@ class Game:  # [TESTED & FINALISED]
             # If the play button has been clicked, starting the game:
             if btn_play.clicked():
                 # If the player does not have any save data, maximum health will be set to 0.
-                # If this is the case, launching the information menu, then the player creation menu:
+                # If this is the case, launching the information menu, then the player creation menu
+                # Which will start the game when the player returns to this point:
                 if self.database_helper.get_player_stats()[Player.FULL_HEALTH] == 0:
                     self.show_information()
                     self.show_character_menu()
@@ -417,12 +418,12 @@ class Game:  # [TESTED & FINALISED]
                                frame_thickness=0))
 
         # Confirm Button:
-        btn_btn_confirm = Button(self,
-                                 text=GOT_IT,
-                                 font_size=0.04,
-                                 between=(txt_information_paragraph.get_rect().midbottom, self.rect.midbottom),
-                                 margin=0.015)
-        views.append(btn_btn_confirm)
+        btn_confirm = Button(self,
+                             text=GOT_IT,
+                             font_size=0.04,
+                             between=(txt_information_paragraph.get_rect().midbottom, self.rect.midbottom),
+                             margin=0.015)
+        views.append(btn_confirm)
         # <!> __UI LAYOUT__ <!>
 
         while not self.done:
@@ -430,7 +431,7 @@ class Game:  # [TESTED & FINALISED]
             self.update()
 
             # Exit if exit button or escape clicked, returning to the previous menu:
-            if btn_btn_confirm.clicked() or self.key_pressed(pygame.K_ESCAPE):
+            if btn_confirm.clicked() or self.key_pressed(pygame.K_ESCAPE):
                 return
 
             for view in views: view.update()
@@ -878,6 +879,7 @@ class Game:  # [TESTED & FINALISED]
             self.clock.tick(self.frame_rate)
 
 
+__version__ = "1.0.0"
 if __name__ == "__main__":
     # Game().show_main_menu()
 
